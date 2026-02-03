@@ -1,0 +1,99 @@
+@model List<DocumentFlow.Models.ViewModels.UserListViewModel>
+@{
+    ViewData["Title"] = "Управление пользователями";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people me-2"></i>Пользователи</h2>
+    <a asp-action="CreateUser" class="btn btn-primary">
+        <i class="bi bi-person-plus me-1"></i>Добавить пользователя
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Email</th>
+                        <th>Отдел / Должность</th>
+                        <th>Роли</th>
+                        <th>Статус</th>
+                        <th>Дата регистрации</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr class="@(!user.IsActive ? "table-secondary" : "")">
+                            <td>
+                                <strong>@user.FullName</strong>
+                            </td>
+                            <td>@user.Email</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(user.Department) || !string.IsNullOrEmpty(user.Position))
+                                {
+                                    <small>
+                                        @user.Department<br />
+                                        <span class="text-muted">@user.Position</span>
+                                    </small>
+                                }
+                            </td>
+                            <td>
+                                @foreach (var role in user.Roles)
+                                {
+                                    <span class="badge @GetRoleBadgeClass(role)">@GetRoleDisplayName(role)</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge bg-success">Активен</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Заблокирован</span>
+                                }
+                            </td>
+                            <td>@user.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="ToggleUserStatus" asp-route-id="@user.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-outline-warning" : "btn-outline-success")"
+                                                onclick="return confirm('@(user.IsActive ? "Заблокировать" : "Активировать") пользователя?');">
+                                            <i class="bi @(user.IsActive ? "bi-lock" : "bi-unlock")"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetRoleDisplayName(string role) => role switch
+    {
+        "Administrator" => "Администратор",
+        "Manager" => "Руководитель",
+        "Employee" => "Сотрудник",
+        _ => role
+    };
+
+    string GetRoleBadgeClass(string role) => role switch
+    {
+        "Administrator" => "bg-danger",
+        "Manager" => "bg-warning text-dark",
+        "Employee" => "bg-info",
+        _ => "bg-secondary"
+    };
+}

@@ -1,0 +1,23 @@
+@model DocumentFlow.Models.ViewModels.DocumentCommentViewModel
+
+<div class="border-start border-3 border-primary ps-3 mb-3">
+    <div class="d-flex justify-content-between">
+        <strong>@Model.AuthorName</strong>
+        <small class="text-muted">@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+    </div>
+    <p class="mb-1">@Model.Text</p>
+    @if (Model.UpdatedAt.HasValue)
+    {
+        <small class="text-muted">(изменено @Model.UpdatedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"))</small>
+    }
+
+    @if (Model.Replies.Any())
+    {
+        <div class="ms-4 mt-2">
+            @foreach (var reply in Model.Replies)
+            {
+                @await Html.PartialAsync("_CommentPartial", reply)
+            }
+        </div>
+    }
+</div>

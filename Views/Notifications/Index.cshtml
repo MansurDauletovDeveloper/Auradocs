@@ -1,0 +1,73 @@
+@model List<DocumentFlow.Models.ViewModels.NotificationViewModel>
+@{
+    ViewData["Title"] = "Уведомления";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-bell me-2"></i>Уведомления</h2>
+    @if (Model.Any(n => !n.IsRead))
+    {
+        <form asp-action="MarkAllAsRead" method="post">
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-check2-all me-1"></i>Отметить все как прочитанные
+            </button>
+        </form>
+    }
+</div>
+
+@if (Model.Any())
+{
+    <div class="list-group">
+        @foreach (var notification in Model)
+        {
+            <div class="list-group-item list-group-item-action @(!notification.IsRead ? "list-group-item-light border-start border-primary border-4" : "")">
+                <div class="d-flex w-100 justify-content-between align-items-start">
+                    <div class="d-flex align-items-start">
+                        @{
+                            var iconClass = notification.Type switch {
+                                DocumentFlow.Models.Entities.NotificationType.ApprovalRequest => "bi-hourglass-split text-warning",
+                                DocumentFlow.Models.Entities.NotificationType.DocumentApproved => "bi-check-circle text-success",
+                                DocumentFlow.Models.Entities.NotificationType.DocumentRejected => "bi-x-circle text-danger",
+                                DocumentFlow.Models.Entities.NotificationType.Comment => "bi-chat-dots text-info",
+                                DocumentFlow.Models.Entities.NotificationType.Reminder => "bi-alarm text-warning",
+                                DocumentFlow.Models.Entities.NotificationType.System => "bi-gear text-secondary",
+                                _ => "bi-bell text-muted"
+                            };
+                        }
+                        <i class="bi @iconClass fs-4 me-3"></i>
+                        <div>
+                            <h6 class="mb-1 @(!notification.IsRead ? "fw-bold" : "")">@notification.Title</h6>
+                            <p class="mb-1 text-muted">@notification.Message</p>
+                            @if (notification.DocumentId.HasValue)
+                            {
+                                <a asp-controller="Documents" asp-action="Details" asp-route-id="@notification.DocumentId" class="btn btn-sm btn-outline-primary mt-1">
+                                    <i class="bi bi-file-earmark me-1"></i>Открыть документ
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted d-block">@notification.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-action="MarkAsRead" asp-route-id="@notification.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-link p-0 mt-1" title="Отметить как прочитанное">
+                                    <i class="bi bi-check2"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-bell-slash display-1 text-muted"></i>
+            <p class="mt-3 text-muted">У вас пока нет уведомлений</p>
+        </div>
+    </div>
+}

@@ -1,0 +1,293 @@
+@model DocumentFlow.Models.ViewModels.DashboardViewModel
+@using DocumentFlow.Models.Entities
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2 me-2"></i>Добро пожаловать, @Model.UserName!</h2>
+        <p class="text-muted">Роль: @Model.Role</p>
+    </div>
+</div>
+
+<!-- Статистика -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">Мои документы</h6>
+                        <h2 class="mb-0">@Model.MyDocumentsCount</h2>
+                    </div>
+                    <i class="bi bi-file-earmark-text" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-dark-50">На согласовании</h6>
+                        <h2 class="mb-0">@Model.MyPendingCount</h2>
+                    </div>
+                    <i class="bi bi-hourglass-split" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">Утверждено</h6>
+                        <h2 class="mb-0">@Model.MyApprovedCount</h2>
+                    </div>
+                    <i class="bi bi-check-circle" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">Отклонено</h6>
+                        <h2 class="mb-0">@Model.MyRejectedCount</h2>
+                    </div>
+                    <i class="bi bi-x-circle" style="font-size: 2rem; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (User.IsInRole("Manager") || User.IsInRole("Administrator"))
+{
+    <!-- Статистика согласований -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Ожидают моего согласования</h6>
+                            <h3 class="mb-0">@Model.PendingApprovalsCount</h3>
+                        </div>
+                        <a asp-controller="Approval" asp-action="Index" class="btn btn-warning">
+                            <i class="bi bi-eye me-1"></i>Просмотреть
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (Model.OverdueApprovalsCount > 0)
+        {
+            <div class="col-md-6">
+                <div class="card border-danger">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-danger">Просрочено</h6>
+                                <h3 class="mb-0 text-danger">@Model.OverdueApprovalsCount</h3>
+                            </div>
+                            <i class="bi bi-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (User.IsInRole("Administrator"))
+{
+    <!-- Статистика для администратора -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-people text-info" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">@Model.TotalUsersCount</h4>
+                    <p class="text-muted mb-0">Пользователей</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-files text-primary" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">@Model.TotalDocumentsCount</h4>
+                    <p class="text-muted mb-0">Всего документов</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-check text-success" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">@Model.TodayDocumentsCount</h4>
+                    <p class="text-muted mb-0">Документов сегодня</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <!-- Последние документы -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Последние документы</h5>
+                <a asp-controller="Documents" asp-action="Index" class="btn btn-sm btn-outline-primary">Все документы</a>
+            </div>
+            <div class="card-body">
+                @if (Model.RecentDocuments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Документ</th>
+                                    <th>Тип</th>
+                                    <th>Статус</th>
+                                    <th>Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var doc in Model.RecentDocuments)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Documents" asp-action="Details" asp-route-id="@doc.Id">
+                                                @doc.Title
+                                            </a>
+                                            <br /><small class="text-muted">@doc.RegistrationNumber</small>
+                                        </td>
+                                        <td>@GetDocumentTypeName(doc.DocumentType)</td>
+                                        <td>
+                                            <span class="badge @GetStatusBadgeClass(doc.Status)">
+                                                @GetStatusName(doc.Status)
+                                            </span>
+                                        </td>
+                                        <td>@doc.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center text-muted py-4">
+                        <i class="bi bi-inbox" style="font-size: 3rem;"></i><br />
+                        Документов пока нет
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Уведомления</h5>
+                @if (Model.UnreadNotificationsCount > 0)
+                {
+                    <span class="badge bg-danger">@Model.UnreadNotificationsCount</span>
+                }
+            </div>
+            <div class="card-body">
+                @if (Model.RecentNotifications.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var notification in Model.RecentNotifications)
+                        {
+                            <a asp-controller="Documents" asp-action="Details" asp-route-id="@notification.DocumentId" 
+                               class="list-group-item list-group-item-action @(!notification.IsRead ? "bg-light" : "")">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@notification.Title</h6>
+                                    <small class="text-muted">@notification.CreatedAt.ToLocalTime().ToString("dd.MM HH:mm")</small>
+                                </div>
+                                <small class="text-muted">@notification.Message</small>
+                            </a>
+                        }
+                    </div>
+                    <a asp-controller="Notifications" asp-action="Index" class="btn btn-link btn-sm w-100">
+                        Все уведомления
+                    </a>
+                }
+                else
+                {
+                    <p class="text-center text-muted py-3">
+                        Нет новых уведомлений
+                    </p>
+                }
+            </div>
+        </div>
+
+        <!-- Быстрые действия -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Быстрые действия</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-controller="Documents" asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Создать документ
+                    </a>
+                    <a asp-controller="Documents" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-search me-1"></i>Найти документ
+                    </a>
+                    @if (User.IsInRole("Manager") || User.IsInRole("Administrator"))
+                    {
+                        <a asp-controller="Approval" asp-action="Index" class="btn btn-outline-warning">
+                            <i class="bi bi-check2-square me-1"></i>Согласования
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetDocumentTypeName(DocumentType type) => type switch
+    {
+        DocumentType.Application => "Заявление",
+        DocumentType.Order => "Приказ",
+        DocumentType.Contract => "Договор",
+        DocumentType.Act => "Акт",
+        DocumentType.Memo => "Служебная записка",
+        DocumentType.Report => "Отчёт",
+        DocumentType.Protocol => "Протокол",
+        _ => "Другое"
+    };
+
+    string GetStatusName(DocumentStatus status) => status switch
+    {
+        DocumentStatus.Draft => "Черновик",
+        DocumentStatus.Pending => "На согласовании",
+        DocumentStatus.Approved => "Утверждён",
+        DocumentStatus.Rejected => "Отклонён",
+        DocumentStatus.Archived => "Архив",
+        _ => "Неизвестно"
+    };
+
+    string GetStatusBadgeClass(DocumentStatus status) => status switch
+    {
+        DocumentStatus.Draft => "bg-secondary",
+        DocumentStatus.Pending => "bg-warning text-dark",
+        DocumentStatus.Approved => "bg-success",
+        DocumentStatus.Rejected => "bg-danger",
+        DocumentStatus.Archived => "bg-info",
+        _ => "bg-secondary"
+    };
+}

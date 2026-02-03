@@ -1,0 +1,176 @@
+@model DocumentFlow.Models.ViewModels.DocumentSearchViewModel
+@using DocumentFlow.Models.Entities
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Документы";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-folder me-2"></i>Документы</h2>
+    <div>
+        <a asp-action="Export" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-download me-1"></i>Экспорт CSV
+        </a>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Создать документ
+        </a>
+    </div>
+</div>
+
+<!-- Фильтры -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Поиск</label>
+                    <input asp-for="SearchTerm" class="form-control" placeholder="Название или номер..." />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="DocumentType" class="form-label"></label>
+                    <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentType>()">
+                        <option value="">Все типы</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<DocumentStatus>()">
+                        <option value="">Все статусы</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="DateFrom" class="form-label"></label>
+                    <input asp-for="DateFrom" class="form-control" type="date" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="DateTo" class="form-label"></label>
+                    <input asp-for="DateTo" class="form-control" type="date" />
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Таблица документов -->
+<div class="card">
+    <div class="card-body">
+        @if (Model.Documents.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Рег. номер</th>
+                            <th>Название</th>
+                            <th>Тип</th>
+                            <th>Автор</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                            <th>Версия</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var doc in Model.Documents)
+                        {
+                            <tr>
+                                <td><code>@doc.RegistrationNumber</code></td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@doc.Id" class="fw-semibold text-decoration-none">
+                                        @doc.Title
+                                    </a>
+                                </td>
+                                <td>@GetDocumentTypeName(doc.DocumentType)</td>
+                                <td>@doc.AuthorName</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(doc.Status)">
+                                        @GetStatusName(doc.Status)
+                                    </span>
+                                </td>
+                                <td>@doc.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                                <td>v@doc.CurrentVersion</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Пагинация -->
+            @if (Model.TotalPages > 1)
+            {
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.Page ? "active" : "")">
+                                <a class="page-link" asp-action="Index" 
+                                   asp-route-page="@i"
+                                   asp-route-searchTerm="@Model.SearchTerm"
+                                   asp-route-documentType="@Model.DocumentType"
+                                   asp-route-status="@Model.Status"
+                                   asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")"
+                                   asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+            <p class="text-muted text-center">Показано @Model.Documents.Count из @Model.TotalCount документов</p>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                <h5 class="mt-3 text-muted">Документы не найдены</h5>
+                <p class="text-muted">Попробуйте изменить параметры поиска или создайте новый документ</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i>Создать документ
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    string GetDocumentTypeName(DocumentType type) => type switch
+    {
+        DocumentType.Application => "Заявление",
+        DocumentType.Order => "Приказ",
+        DocumentType.Contract => "Договор",
+        DocumentType.Act => "Акт",
+        DocumentType.Memo => "Служебная записка",
+        DocumentType.Report => "Отчёт",
+        DocumentType.Protocol => "Протокол",
+        _ => "Другое"
+    };
+
+    string GetStatusName(DocumentStatus status) => status switch
+    {
+        DocumentStatus.Draft => "Черновик",
+        DocumentStatus.Pending => "На согласовании",
+        DocumentStatus.Approved => "Утверждён",
+        DocumentStatus.Rejected => "Отклонён",
+        DocumentStatus.Archived => "Архив",
+        _ => "Неизвестно"
+    };
+
+    string GetStatusBadgeClass(DocumentStatus status) => status switch
+    {
+        DocumentStatus.Draft => "bg-secondary",
+        DocumentStatus.Pending => "bg-warning text-dark",
+        DocumentStatus.Approved => "bg-success",
+        DocumentStatus.Rejected => "bg-danger",
+        DocumentStatus.Archived => "bg-info",
+        _ => "bg-secondary"
+    };
+}

@@ -1,0 +1,68 @@
+@model DocumentFlow.Models.ViewModels.TemplateCreateViewModel
+@{
+    ViewData["Title"] = "Новый шаблон";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Index">Шаблоны</a></li>
+                <li class="breadcrumb-item active">Новый</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Создание шаблона</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Например: Заявление на отпуск" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DocumentType" class="form-label"></label>
+                        <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentFlow.Models.Entities.DocumentType>()">
+                            <option value="">— Выберите тип —</option>
+                        </select>
+                        <span asp-validation-for="DocumentType" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="2" placeholder="Краткое описание назначения шаблона"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Content" class="form-label">Текст шаблона</label>
+                        <textarea asp-for="Content" class="form-control" rows="8" placeholder="Введите текст шаблона с плейсхолдерами: {ФИО}, {Дата}, {Должность} и т.д."></textarea>
+                        <div class="form-text">Используйте фигурные скобки для переменных: {ФИО}, {Дата}, {Номер}</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="TemplateFile" class="form-label">Или загрузите файл шаблона</label>
+                        <input asp-for="TemplateFile" class="form-control" accept=".doc,.docx,.pdf,.odt" />
+                        <div class="form-text">Форматы: DOC, DOCX, PDF, ODT (макс. 10 МБ)</div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>Создать
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

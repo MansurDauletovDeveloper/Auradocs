@@ -1,0 +1,375 @@
+@model DocumentFlow.Models.ViewModels.DocumentDetailsViewModel
+@using DocumentFlow.Models.Entities
+@using DocumentFlow.Models.ViewModels
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = Model.Title;
+    var approvers = ViewBag.Approvers as List<SelectListItem> ?? new List<SelectListItem>();
+}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Index">Документы</a></li>
+                <li class="breadcrumb-item active">@Model.RegistrationNumber</li>
+            </ol>
+        </nav>
+        <h2>@Model.Title</h2>
+        <p class="text-muted">
+            <i class="bi bi-hash"></i> @Model.RegistrationNumber | 
+            <i class="bi bi-person"></i> @Model.AuthorName | 
+            <i class="bi bi-calendar"></i> @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+        </p>
+    </div>
+    <div class="col-md-4 text-end">
+        <span class="badge fs-6 @GetStatusBadgeClass(Model.Status)">
+            @GetStatusName(Model.Status)
+        </span>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Основная информация -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Информация о документе</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Тип:</strong> @GetDocumentTypeName(Model.DocumentType)</p>
+                        <p><strong>Текущая версия:</strong> v@Model.CurrentVersion</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Шаблон:</strong> @(Model.TemplateName ?? "Не использовался")</p>
+                        <p><strong>Обновлено:</strong> @Model.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <hr />
+                    <p><strong>Описание:</strong></p>
+                    <p>@Model.Description</p>
+                }
+            </div>
+            @if (Model.CanEdit || Model.CanDelete || Model.CanSubmitForApproval)
+            {
+                <div class="card-footer">
+                    @if (Model.CanEdit)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="bi bi-pencil me-1"></i>Редактировать
+                        </a>
+                    }
+                    @if (Model.CanSubmitForApproval)
+                    {
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approvalModal">
+                            <i class="bi bi-send me-1"></i>Отправить на согласование
+                        </button>
+                    }
+                    @if (Model.CanDelete)
+                    {
+                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" 
+                              onsubmit="return confirm('Вы уверены, что хотите удалить этот документ?');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i>Удалить
+                            </button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Версии документа -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>История версий</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Versions.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Версия</th>
+                                    <th>Файл</th>
+                                    <th>Размер</th>
+                                    <th>Автор</th>
+                                    <th>Дата</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var version in Model.Versions)
+                                {
+                                    <tr class="@(version.IsCurrent ? "table-active" : "")">
+                                        <td>
+                                            v@version.VersionNumber
+                                            @if (version.IsCurrent)
+                                            {
+                                                <span class="badge bg-primary ms-1">Текущая</span>
+                                            }
+                                        </td>
+                                        <td>@version.FileName</td>
+                                        <td>@FormatFileSize(version.FileSize)</td>
+                                        <td>@version.CreatedByName</td>
+                                        <td>@version.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            <a asp-action="DownloadVersion" asp-route-id="@version.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            @if (!version.IsCurrent && Model.CanEdit)
+                                            {
+                                                <form asp-action="RestoreVersion" asp-route-id="@version.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-warning" 
+                                                            onclick="return confirm('Восстановить эту версию?');">
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                    @if (!string.IsNullOrEmpty(version.ChangeDescription))
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-muted small ps-4">
+                                                <i class="bi bi-chat-left-text me-1"></i>@version.ChangeDescription
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center">Нет версий</p>
+                }
+            </div>
+        </div>
+
+        <!-- Комментарии -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Комментарии (@Model.Comments.Count)</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="AddComment" method="post" class="mb-4">
+                    <input type="hidden" name="DocumentId" value="@Model.Id" />
+                    <div class="mb-2">
+                        <textarea name="Text" class="form-control" rows="2" placeholder="Напишите комментарий..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-send me-1"></i>Отправить
+                    </button>
+                </form>
+
+                @if (Model.Comments.Any())
+                {
+                    @foreach (var comment in Model.Comments)
+                    {
+                        @await Html.PartialAsync("_CommentPartial", comment)
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center">Комментариев пока нет</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-md-4">
+        <!-- История согласования -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-check2-square me-2"></i>Согласование</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ApprovalRequests.Any())
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var request in Model.ApprovalRequests)
+                        {
+                            <li class="list-group-item px-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@request.ApproverName</strong><br />
+                                        <small class="text-muted">@request.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                                    </div>
+                                    <span class="badge @GetApprovalStatusBadgeClass(request.Status)">
+                                        @GetApprovalStatusName(request.Status)
+                                    </span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(request.Comment))
+                                {
+                                    <p class="mt-2 mb-0 small text-muted">
+                                        <i class="bi bi-chat-left-text me-1"></i>@request.Comment
+                                    </p>
+                                }
+                                @if (request.ProcessedAt.HasValue)
+                                {
+                                    <small class="text-muted">Обработано: @request.ProcessedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted text-center">Запросов на согласование нет</p>
+                }
+            </div>
+        </div>
+
+        <!-- Действия согласующего -->
+        @if (Model.CanApprove)
+        {
+            var pendingRequest = Model.ApprovalRequests.FirstOrDefault(a => a.Status == ApprovalStatus.Pending);
+            if (pendingRequest != null)
+            {
+                <div class="card border-warning mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Требуется ваше решение</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="approveForm" asp-controller="Approval" asp-action="Approve" method="post">
+                            <input type="hidden" name="RequestId" value="@pendingRequest.Id" />
+                            <input type="hidden" name="DocumentId" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">Комментарий (опционально)</label>
+                                <textarea name="Comment" class="form-control" rows="2" id="approveComment"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 mb-2">
+                                <i class="bi bi-check-circle me-1"></i>Утвердить
+                            </button>
+                        </form>
+                        <form asp-controller="Approval" asp-action="Reject" method="post">
+                            <input type="hidden" name="RequestId" value="@pendingRequest.Id" />
+                            <input type="hidden" name="DocumentId" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">Причина отклонения</label>
+                                <textarea name="Comment" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-x-circle me-1"></i>Отклонить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<!-- Модальное окно отправки на согласование -->
+<div class="modal fade" id="approvalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="SubmitForApproval" method="post">
+                <input type="hidden" name="DocumentId" value="@Model.Id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Отправка на согласование</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Выберите согласующих</label>
+                        <select name="ApproverIds" class="form-select" multiple size="5" required>
+                            @foreach (var approver in approvers)
+                            {
+                                <option value="@approver.Value">@approver.Text</option>
+                            }
+                        </select>
+                        <div class="form-text">Удерживайте Ctrl для выбора нескольких</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Срок согласования</label>
+                        <input type="date" name="DueDate" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Комментарий</label>
+                        <textarea name="Comment" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send me-1"></i>Отправить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetDocumentTypeName(DocumentType type) => type switch
+    {
+        DocumentType.Application => "Заявление",
+        DocumentType.Order => "Приказ",
+        DocumentType.Contract => "Договор",
+        DocumentType.Act => "Акт",
+        DocumentType.Memo => "Служебная записка",
+        DocumentType.Report => "Отчёт",
+        DocumentType.Protocol => "Протокол",
+        _ => "Другое"
+    };
+
+    string GetStatusName(DocumentStatus status) => status switch
+    {
+        DocumentStatus.Draft => "Черновик",
+        DocumentStatus.Pending => "На согласовании",
+        DocumentStatus.Approved => "Утверждён",
+        DocumentStatus.Rejected => "Отклонён",
+        DocumentStatus.Archived => "Архив",
+        _ => "Неизвестно"
+    };
+
+    string GetStatusBadgeClass(DocumentStatus status) => status switch
+    {
+        DocumentStatus.Draft => "bg-secondary",
+        DocumentStatus.Pending => "bg-warning text-dark",
+        DocumentStatus.Approved => "bg-success",
+        DocumentStatus.Rejected => "bg-danger",
+        DocumentStatus.Archived => "bg-info",
+        _ => "bg-secondary"
+    };
+
+    string GetApprovalStatusName(ApprovalStatus status) => status switch
+    {
+        ApprovalStatus.Pending => "Ожидает",
+        ApprovalStatus.Approved => "Утверждён",
+        ApprovalStatus.Rejected => "Отклонён",
+        ApprovalStatus.Cancelled => "Отменён",
+        _ => "Неизвестно"
+    };
+
+    string GetApprovalStatusBadgeClass(ApprovalStatus status) => status switch
+    {
+        ApprovalStatus.Pending => "bg-warning text-dark",
+        ApprovalStatus.Approved => "bg-success",
+        ApprovalStatus.Rejected => "bg-danger",
+        ApprovalStatus.Cancelled => "bg-secondary",
+        _ => "bg-secondary"
+    };
+
+    string FormatFileSize(long bytes)
+    {
+        if (bytes == 0) return "0 B";
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        int order = 0;
+        double size = bytes;
+        while (size >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            size /= 1024;
+        }
+        return $"{size:0.##} {sizes[order]}";
+    }
+}

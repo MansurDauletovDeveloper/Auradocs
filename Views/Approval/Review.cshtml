@@ -1,0 +1,170 @@
+@model DocumentFlow.Models.ViewModels.DocumentDetailsViewModel
+@using DocumentFlow.Models.Entities
+@using DocumentFlow.Models.ViewModels
+@{
+    ViewData["Title"] = "Рассмотрение документа";
+    var approvalRequest = ViewBag.ApprovalRequest as ApprovalRequestViewModel;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Согласования</a></li>
+        <li class="breadcrumb-item active">@Model.RegistrationNumber</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>@Model.Title</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Регистрационный номер:</strong> @Model.RegistrationNumber</p>
+                        <p><strong>Тип:</strong> @GetDocumentTypeName(Model.DocumentType)</p>
+                        <p><strong>Автор:</strong> @Model.AuthorName</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Дата создания:</strong> @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                        <p><strong>Версия:</strong> v@Model.CurrentVersion</p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <hr />
+                    <p><strong>Описание:</strong></p>
+                    <p>@Model.Description</p>
+                }
+            </div>
+        </div>
+
+        <!-- Файлы документа -->
+        @if (Model.Versions.Any())
+        {
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-paperclip me-2"></i>Файлы документа</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        @foreach (var version in Model.Versions.Where(v => v.IsCurrent))
+                        {
+                            <a asp-controller="Documents" asp-action="DownloadVersion" asp-route-id="@version.Id" 
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-file-earmark me-2"></i>
+                                    @version.FileName
+                                    <small class="text-muted ms-2">(@FormatFileSize(version.FileSize))</small>
+                                </div>
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-download"></i> Скачать
+                                </span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Комментарии -->
+        @if (Model.Comments.Any())
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Комментарии</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        @await Html.PartialAsync("_CommentPartial", comment)
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        @if (approvalRequest != null)
+        {
+            <div class="card border-warning mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Требуется ваше решение</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        Запрос от: @approvalRequest.RequestedByName<br />
+                        Дата: @approvalRequest.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                        @if (approvalRequest.DueDate.HasValue)
+                        {
+                            <br /><span class="text-danger">Срок: @approvalRequest.DueDate.Value.ToLocalTime().ToString("dd.MM.yyyy")</span>
+                        }
+                    </p>
+
+                    <hr />
+
+                    <form asp-action="Approve" method="post" class="mb-4">
+                        <input type="hidden" name="RequestId" value="@approvalRequest.Id" />
+                        <input type="hidden" name="DocumentId" value="@Model.Id" />
+                        <div class="mb-3">
+                            <label class="form-label">Комментарий (опционально)</label>
+                            <textarea name="Comment" class="form-control" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle me-1"></i>Утвердить документ
+                        </button>
+                    </form>
+
+                    <hr />
+
+                    <form asp-action="Reject" method="post">
+                        <input type="hidden" name="RequestId" value="@approvalRequest.Id" />
+                        <input type="hidden" name="DocumentId" value="@Model.Id" />
+                        <div class="mb-3">
+                            <label class="form-label">Причина отклонения <span class="text-danger">*</span></label>
+                            <textarea name="Comment" class="form-control" rows="3" required 
+                                      placeholder="Укажите причину отклонения документа..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-x-circle me-1"></i>Отклонить документ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-left me-1"></i>Вернуться к списку
+        </a>
+    </div>
+</div>
+
+@functions {
+    string GetDocumentTypeName(DocumentType type) => type switch
+    {
+        DocumentType.Application => "Заявление",
+        DocumentType.Order => "Приказ",
+        DocumentType.Contract => "Договор",
+        DocumentType.Act => "Акт",
+        DocumentType.Memo => "Служебная записка",
+        DocumentType.Report => "Отчёт",
+        DocumentType.Protocol => "Протокол",
+        _ => "Другое"
+    };
+
+    string FormatFileSize(long bytes)
+    {
+        if (bytes == 0) return "0 B";
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        int order = 0;
+        double size = bytes;
+        while (size >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            size /= 1024;
+        }
+        return $"{size:0.##} {sizes[order]}";
+    }
+}
