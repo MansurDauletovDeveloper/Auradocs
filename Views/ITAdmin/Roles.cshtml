@@ -1,0 +1,166 @@
+@model IEnumerable<DocumentFlow.Models.ViewModels.RoleInfoViewModel>
+@{
+    ViewData["Title"] = "Справочник ролей";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">
+        <i class="bi bi-shield-lock-fill me-2"></i>Справочник ролей
+    </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-action="Index">IT Администрирование</a></li>
+        <li class="breadcrumb-item active">Справочник ролей</li>
+    </ol>
+
+    <div class="row">
+        @foreach (var role in Model)
+        {
+            <div class="col-xl-4 col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>@role.DisplayName
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-2">
+                            <code>@role.Name</code>
+                        </p>
+                        <p>@role.Description</p>
+                        
+                        <hr />
+                        
+                        <h6>Возможности:</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                @if (role.CanApprove)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                }
+                                Согласование документов
+                            </li>
+                            <li>
+                                @if (role.CanComment)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                }
+                                Комментирование
+                            </li>
+                            <li>
+                                @if (role.CanAccessAudit)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                }
+                                Доступ к аудиту
+                            </li>
+                            <li>
+                                @if (role.CanManageArchive)
+                                {
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                }
+                                Управление архивом
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Users" asp-route-roleFilter="@role.Name" 
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-people me-1"></i>Пользователи с этой ролью
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Матрица прав -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <i class="bi bi-grid-3x3-gap me-1"></i>
+            Матрица прав доступа
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Роль</th>
+                            <th class="text-center">Согласование</th>
+                            <th class="text-center">Комментарии</th>
+                            <th class="text-center">Аудит</th>
+                            <th class="text-center">Архив</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var role in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@role.DisplayName</strong>
+                                    <br />
+                                    <small class="text-muted">@role.Name</small>
+                                </td>
+                                <td class="text-center">
+                                    @if (role.CanApprove)
+                                    {
+                                        <i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-dash text-muted"></i>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (role.CanComment)
+                                    {
+                                        <i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-dash text-muted"></i>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (role.CanAccessAudit)
+                                    {
+                                        <i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-dash text-muted"></i>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (role.CanManageArchive)
+                                    {
+                                        <i class="bi bi-check-lg text-success" style="font-size: 1.5rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-dash text-muted"></i>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

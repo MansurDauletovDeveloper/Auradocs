@@ -60,6 +60,22 @@
                                     </ul>
                                 </li>
                             }
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ITIntegrator"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-gear-fill me-1"></i>IT Admin
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Index"><i class="bi bi-speedometer2 me-2"></i>Панель управления</a></li>
+                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Users"><i class="bi bi-shield-lock me-2"></i>Права пользователей</a></li>
+                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Sessions"><i class="bi bi-activity me-2"></i>Мониторинг сессий</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Roles"><i class="bi bi-tags me-2"></i>Справочник ролей</a></li>
+                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="TestAccounts"><i class="bi bi-key me-2"></i>Тестовые аккаунты</a></li>
+                                    </ul>
+                                </li>
+                            }
                         </ul>
                         <ul class="navbar-nav">
                             <li class="nav-item">

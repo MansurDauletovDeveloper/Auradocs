@@ -1,0 +1,176 @@
+@model IEnumerable<DocumentFlow.Models.ViewModels.TestAccountViewModel>
+@{
+    ViewData["Title"] = "Тестовые аккаунты";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">
+        <i class="bi bi-key-fill me-2"></i>Тестовые аккаунты
+    </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-action="Index">IT Администрирование</a></li>
+        <li class="breadcrumb-item active">Тестовые аккаунты</li>
+    </ol>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>Справка:</strong> Ниже представлены тестовые аккаунты для каждой роли системы. 
+        Используйте их для проверки функционала различных ролей.
+        Пароли по умолчанию указаны для первоначального входа.
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-table me-1"></i>
+            Логины и пароли для всех ролей
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Роль</th>
+                            <th>Описание</th>
+                            <th>Email (логин)</th>
+                            <th>Пароль</th>
+                            <th class="text-center">Статус</th>
+                            <th class="text-center">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var account in Model)
+                        {
+                            <tr class="@(!account.Exists ? "table-warning" : "")">
+                                <td>
+                                    <strong>@account.RoleDisplayName</strong>
+                                    <br />
+                                    <small class="text-muted">@account.RoleName</small>
+                                </td>
+                                <td>
+                                    <small>@account.RoleDescription</small>
+                                </td>
+                                <td>
+                                    @if (account.Exists)
+                                    {
+                                        <code class="user-select-all">@account.Email</code>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">@account.Email</span>
+                                    }
+                                </td>
+                                <td>
+                                    <code class="user-select-all bg-light px-2 py-1 rounded">@account.Password</code>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary ms-1" 
+                                            onclick="copyToClipboard('@account.Password')" title="Копировать пароль">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </td>
+                                <td class="text-center">
+                                    @if (account.Exists)
+                                    {
+                                        if (account.IsActive)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>Активен
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-pause-circle me-1"></i>Отключен
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Не создан
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (account.Exists)
+                                    {
+                                        <a asp-controller="Account" asp-action="Login" 
+                                           class="btn btn-sm btn-primary" target="_blank" title="Войти">
+                                            <i class="bi bi-box-arrow-in-right"></i>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточки для быстрого доступа -->
+    <h4 class="mb-3"><i class="bi bi-lightning me-2"></i>Быстрый вход для тестирования</h4>
+    <div class="row">
+        @foreach (var account in Model.Where(a => a.Exists && a.IsActive))
+        {
+            <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-person-badge me-2"></i>@account.RoleDisplayName
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text small">@account.RoleDescription</p>
+                        <hr />
+                        <div class="mb-2">
+                            <strong>Логин:</strong>
+                            <br />
+                            <code class="user-select-all">@account.Email</code>
+                        </div>
+                        <div>
+                            <strong>Пароль:</strong>
+                            <br />
+                            <code class="user-select-all">@account.Password</code>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-controller="Account" asp-action="Login" 
+                           class="btn btn-primary w-100" target="_blank">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Войти
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Предупреждение -->
+    <div class="alert alert-warning mt-4">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <strong>Внимание!</strong> Тестовые аккаунты предназначены только для разработки и тестирования. 
+        В продакшн-среде необходимо изменить пароли или удалить тестовых пользователей.
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Показать уведомление об успешном копировании
+                var toast = document.createElement('div');
+                toast.className = 'position-fixed bottom-0 end-0 p-3';
+                toast.innerHTML = `
+                    <div class="toast show" role="alert">
+                        <div class="toast-header bg-success text-white">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong class="me-auto">Скопировано!</strong>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                        </div>
+                        <div class="toast-body">
+                            Пароль скопирован в буфер обмена
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.remove(); }, 3000);
+            });
+        }
+    </script>
+}

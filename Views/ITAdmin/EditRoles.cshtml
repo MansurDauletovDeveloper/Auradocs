@@ -1,0 +1,181 @@
+@model DocumentFlow.Models.ViewModels.EditUserRolesViewModel
+@{
+    ViewData["Title"] = "Редактирование прав";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">
+        <i class="bi bi-shield-lock-fill me-2"></i>Редактирование прав
+    </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-action="Index">IT Администрирование</a></li>
+        <li class="breadcrumb-item"><a asp-action="Users">Пользователи</a></li>
+        <li class="breadcrumb-item active">@Model.FullName</li>
+    </ol>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Информация о пользователе -->
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-person-circle me-1"></i>
+                    Информация о пользователе
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-person-circle" style="font-size: 5rem; color: #6c757d;"></i>
+                    </div>
+                    <h5 class="text-center">@Model.FullName</h5>
+                    <p class="text-center text-muted">@Model.Email</p>
+                    <hr />
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Должность:</dt>
+                        <dd class="col-sm-7">@(Model.Position ?? "Не указана")</dd>
+                        <dt class="col-sm-5">Отдел:</dt>
+                        <dd class="col-sm-7">@(Model.Department ?? "Не указан")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Текущие роли -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-tags me-1"></i>
+                    Текущие роли
+                </div>
+                <div class="card-body">
+                    @foreach (var role in Model.AvailableRoles.Where(r => r.IsSelected))
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-primary">@role.DisplayName</span>
+                            <form asp-action="RemoveRole" method="post" style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="userId" value="@Model.UserId" />
+                                <input type="hidden" name="roleName" value="@role.Name" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                        onclick="return confirm('Удалить роль @role.DisplayName?')">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    @if (!Model.AvailableRoles.Any(r => r.IsSelected))
+                    {
+                        <div class="text-muted text-center">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Нет назначенных ролей
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма редактирования -->
+        <div class="col-xl-8">
+            <form asp-action="EditRoles" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="FullName" />
+
+                <!-- Разрешения -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="bi bi-toggle-on me-1"></i>
+                        Разрешения
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="IsActive" />
+                                    <label class="form-check-label" asp-for="IsActive">Активен</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="CanExport" />
+                                    <label class="form-check-label" asp-for="CanExport">
+                                        <i class="bi bi-file-earmark-arrow-down me-1"></i>Экспорт
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="CanPrint" />
+                                    <label class="form-check-label" asp-for="CanPrint">
+                                        <i class="bi bi-printer me-1"></i>Печать
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" asp-for="CanDownload" />
+                                    <label class="form-check-label" asp-for="CanDownload">
+                                        <i class="bi bi-download me-1"></i>Скачивание
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Роли -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="bi bi-shield-lock me-1"></i>
+                        Назначение ролей
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var role in Model.AvailableRoles)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 @(role.IsSelected ? "border-primary" : "")">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       name="SelectedRoles" value="@role.Name" 
+                                                       id="role_@role.Name"
+                                                       @(role.IsSelected ? "checked" : "") />
+                                                <label class="form-check-label fw-bold" for="role_@role.Name">
+                                                    @role.DisplayName
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">@role.Name</small>
+                                            <p class="card-text small mt-2 mb-0">@role.Description</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Users" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Назад к списку
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

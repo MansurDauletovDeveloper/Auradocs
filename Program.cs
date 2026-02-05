@@ -347,4 +347,156 @@ static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleMa
             await userManager.AddToRoleAsync(complianceUser, SystemRoles.ComplianceOfficer);
         }
     }
+
+    // Create IT Integrator user
+    var itEmail = "it@documentflow.local";
+    var itUser = await userManager.FindByEmailAsync(itEmail);
+    
+    if (itUser == null)
+    {
+        itUser = new ApplicationUser
+        {
+            UserName = itEmail,
+            Email = itEmail,
+            FirstName = "Дмитрий",
+            LastName = "Айтишников",
+            MiddleName = "Сергеевич",
+            Position = "ИТ-специалист",
+            Department = "IT",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(itUser, "ITAdmin123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(itUser, SystemRoles.ITIntegrator);
+        }
+    }
+
+    // Create Document Owner user
+    var docOwnerEmail = "docowner@documentflow.local";
+    var docOwnerUser = await userManager.FindByEmailAsync(docOwnerEmail);
+    
+    if (docOwnerUser == null)
+    {
+        docOwnerUser = new ApplicationUser
+        {
+            UserName = docOwnerEmail,
+            Email = docOwnerEmail,
+            FirstName = "Александр",
+            LastName = "Владельцев",
+            MiddleName = "Петрович",
+            Position = "Ведущий специалист",
+            Department = "Отдел документооборота",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(docOwnerUser, "DocOwner123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(docOwnerUser, SystemRoles.DocumentOwner);
+        }
+    }
+
+    // Create External User
+    var externalEmail = "external@partner.com";
+    var externalUser = await userManager.FindByEmailAsync(externalEmail);
+    
+    if (externalUser == null)
+    {
+        externalUser = new ApplicationUser
+        {
+            UserName = externalEmail,
+            Email = externalEmail,
+            FirstName = "Партнёр",
+            LastName = "Внешний",
+            Position = "Представитель контрагента",
+            Department = "Внешняя компания",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = false,
+            CanPrint = false,
+            CanDownload = false,
+            IsExternalUser = true,
+            AccessExpiresAt = DateTime.UtcNow.AddMonths(3)
+        };
+
+        var result = await userManager.CreateAsync(externalUser, "External123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(externalUser, SystemRoles.ExternalUser);
+        }
+    }
+
+    // Create Viewer user
+    var viewerEmail = "viewer@documentflow.local";
+    var viewerUser = await userManager.FindByEmailAsync(viewerEmail);
+    
+    if (viewerUser == null)
+    {
+        viewerUser = new ApplicationUser
+        {
+            UserName = viewerEmail,
+            Email = viewerEmail,
+            FirstName = "Виктор",
+            LastName = "Смотрящий",
+            MiddleName = "Иванович",
+            Position = "Наблюдатель",
+            Department = "Общий отдел",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = false,
+            CanPrint = false,
+            CanDownload = false
+        };
+
+        var result = await userManager.CreateAsync(viewerUser, "Viewer123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(viewerUser, SystemRoles.Viewer);
+        }
+    }
+
+    // Create Deputy user
+    var deputyEmail = "deputy@documentflow.local";
+    var deputyUser = await userManager.FindByEmailAsync(deputyEmail);
+    
+    if (deputyUser == null)
+    {
+        deputyUser = new ApplicationUser
+        {
+            UserName = deputyEmail,
+            Email = deputyEmail,
+            FirstName = "Заместитель",
+            LastName = "Временный",
+            MiddleName = "Олегович",
+            Position = "Заместитель руководителя",
+            Department = "Отдел разработки",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            ManagerId = managerUser?.Id,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(deputyUser, "Deputy123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(deputyUser, SystemRoles.Deputy);
+        }
+    }
 }
