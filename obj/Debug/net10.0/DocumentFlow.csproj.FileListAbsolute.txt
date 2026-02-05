@@ -223,3 +223,4 @@ C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\DocumentFlow.genruntimeconfig.cache
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\ref\DocumentFlow.dll
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\lyjyi0lurw-{0}-hb9jzth397-hb9jzth397.gz
+C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\DocumentFlow.sourcelink.json

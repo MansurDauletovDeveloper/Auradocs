@@ -21,7 +21,19 @@ namespace DocumentFlow.Models.Entities
         Rejected = 3,
 
         [Display(Name = "Архив")]
-        Archived = 4
+        Archived = 4,
+
+        [Display(Name = "На доработке")]
+        Revision = 5,
+
+        [Display(Name = "На юридической проверке")]
+        LegalReview = 6,
+
+        [Display(Name = "Заблокирован")]
+        Blocked = 7,
+
+        [Display(Name = "На рецензии")]
+        UnderReview = 8
     }
 
     /// <summary>
@@ -51,7 +63,37 @@ namespace DocumentFlow.Models.Entities
         Protocol = 6,
 
         [Display(Name = "Другое")]
-        Other = 7
+        Other = 7,
+
+        [Display(Name = "Юридический документ")]
+        Legal = 8,
+
+        [Display(Name = "Регламент")]
+        Regulation = 9,
+
+        [Display(Name = "Инструкция")]
+        Instruction = 10,
+
+        [Display(Name = "Политика")]
+        Policy = 11
+    }
+
+    /// <summary>
+    /// Уровень конфиденциальности документа
+    /// </summary>
+    public enum ConfidentialityLevel
+    {
+        [Display(Name = "Общедоступный")]
+        Public = 0,
+
+        [Display(Name = "Для внутреннего использования")]
+        Internal = 1,
+
+        [Display(Name = "Конфиденциальный")]
+        Confidential = 2,
+
+        [Display(Name = "Секретный")]
+        Secret = 3
     }
 
     /// <summary>
@@ -92,15 +134,60 @@ namespace DocumentFlow.Models.Entities
         [Display(Name = "Текущая версия")]
         public int CurrentVersion { get; set; } = 1;
 
+        /// <summary>
+        /// Уровень конфиденциальности
+        /// </summary>
+        [Required]
+        [Display(Name = "Конфиденциальность")]
+        public ConfidentialityLevel ConfidentialityLevel { get; set; } = ConfidentialityLevel.Internal;
+
+        /// <summary>
+        /// Требуется юридическая проверка
+        /// </summary>
+        [Display(Name = "Требуется юр. проверка")]
+        public bool RequiresLegalReview { get; set; } = false;
+
+        /// <summary>
+        /// Юридическая проверка пройдена
+        /// </summary>
+        [Display(Name = "Юр. проверка пройдена")]
+        public bool LegalReviewCompleted { get; set; } = false;
+
+        /// <summary>
+        /// Дата архивации
+        /// </summary>
+        [Display(Name = "Дата архивации")]
+        public DateTime? ArchivedAt { get; set; }
+
+        /// <summary>
+        /// Срок хранения (в месяцах)
+        /// </summary>
+        [Display(Name = "Срок хранения (мес.)")]
+        public int? RetentionPeriodMonths { get; set; }
+
+        /// <summary>
+        /// Дата удаления (по политике хранения)
+        /// </summary>
+        [Display(Name = "Дата удаления")]
+        public DateTime? ScheduledDeletionDate { get; set; }
+
         // Внешние ключи
         [Required]
         public string AuthorId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Владелец документа (ответственный)
+        /// </summary>
+        public string? OwnerId { get; set; }
 
         public int? TemplateId { get; set; }
 
         // Навигационные свойства
         [ForeignKey("AuthorId")]
         public virtual ApplicationUser? Author { get; set; }
+
+        [ForeignKey("OwnerId")]
+        public virtual ApplicationUser? Owner { get; set; }
 
         [ForeignKey("TemplateId")]
         public virtual DocumentTemplate? Template { get; set; }
@@ -109,5 +196,7 @@ namespace DocumentFlow.Models.Entities
         public virtual ICollection<ApprovalRequest> ApprovalRequests { get; set; } = new List<ApprovalRequest>();
         public virtual ICollection<DocumentComment> Comments { get; set; } = new List<DocumentComment>();
         public virtual ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
+        public virtual ICollection<DocumentAccess> AccessList { get; set; } = new List<DocumentAccess>();
+        public virtual ICollection<DocumentBlock> Blocks { get; set; } = new List<DocumentBlock>();
     }
 }

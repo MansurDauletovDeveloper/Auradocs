@@ -4,6 +4,7 @@ using DocumentFlow.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static DocumentFlow.Models.Entities.SystemRoles;
 
 namespace DocumentFlow.Controllers
 {
@@ -33,13 +34,33 @@ namespace DocumentFlow.Controllers
             if (user == null) return RedirectToAction("Login", "Account");
 
             var roles = await _userManager.GetRolesAsync(user);
-            var isAdmin = roles.Contains("Administrator");
-            var isManager = roles.Contains("Manager");
+            var isAdmin = roles.Contains(SystemRoles.Administrator);
+            var isManager = roles.Contains(SystemRoles.Manager);
+            var isLegal = roles.Contains(SystemRoles.LegalDepartment);
+            var isAuditor = roles.Contains(SystemRoles.Auditor);
+            var isArchivist = roles.Contains(SystemRoles.Archivist);
+            var isReviewer = roles.Contains(SystemRoles.Reviewer);
+            var isComplianceOfficer = roles.Contains(SystemRoles.ComplianceOfficer);
+            var isDeputy = roles.Contains(SystemRoles.Deputy);
+            var isExternalUser = roles.Contains(SystemRoles.ExternalUser);
+            var isViewer = roles.Contains(SystemRoles.Viewer);
 
             var model = new DashboardViewModel
             {
                 UserName = user.FullName,
-                Role = roles.FirstOrDefault() ?? "Сотрудник"
+                UserId = user.Id,
+                Roles = roles.ToList(),
+                PrimaryRole = roles.FirstOrDefault() ?? SystemRoles.Employee,
+                
+                // Права на основе ролей
+                CanCreateDocuments = !isAuditor && !isViewer && !isExternalUser,
+                CanApproveDocuments = isAdmin || isManager || isLegal || isDeputy,
+                CanReviewDocuments = isReviewer || isLegal,
+                CanManageUsers = isAdmin,
+                CanViewAuditLogs = isAdmin || isAuditor || isComplianceOfficer,
+                CanManageArchive = isAdmin || isArchivist,
+                CanBlockDocuments = isAdmin || isLegal || isComplianceOfficer,
+                CanManageIntegrations = isAdmin || roles.Contains(SystemRoles.ITIntegrator)
             };
 
             // Статистика для пользователя
@@ -51,7 +72,7 @@ namespace DocumentFlow.Controllers
             model.MyRejectedCount = userStats.RejectedCount;
 
             // Статистика для руководителя
-            if (isManager || isAdmin)
+            if (isManager || isAdmin || isDeputy)
             {
                 model.PendingApprovalsCount = await _approvalService.GetPendingApprovalsCountAsync(user.Id);
                 model.OverdueApprovalsCount = await _approvalService.GetOverdueApprovalsCountAsync(user.Id);
@@ -65,6 +86,8 @@ namespace DocumentFlow.Controllers
                 model.TotalDocumentsCount = totalStats.TotalDocuments;
                 model.TodayDocumentsCount = totalStats.TodayCount;
                 model.TotalUsersCount = _userManager.Users.Count();
+                model.ActiveUsersCount = _userManager.Users.Count(u => u.IsActive);
+                model.ExternalUsersCount = _userManager.Users.Count(u => u.IsExternalUser);
             }
 
             // Последние документы пользователя

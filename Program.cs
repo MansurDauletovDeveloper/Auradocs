@@ -99,9 +99,8 @@ app.Run();
 // Seed initial data
 static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
 {
-    // Create roles
-    string[] roleNames = { "Administrator", "Manager", "Employee" };
-    foreach (var roleName in roleNames)
+    // Create all roles from SystemRoles
+    foreach (var roleName in SystemRoles.AllRoles)
     {
         if (!await roleManager.RoleExistsAsync(roleName))
         {
@@ -125,13 +124,16 @@ static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleMa
             Department = "IT",
             IsActive = true,
             EmailConfirmed = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
         };
 
         var result = await userManager.CreateAsync(adminUser, "Admin123!");
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(adminUser, "Administrator");
+            await userManager.AddToRoleAsync(adminUser, SystemRoles.Administrator);
         }
     }
 
@@ -152,13 +154,16 @@ static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleMa
             Department = "Отдел разработки",
             IsActive = true,
             EmailConfirmed = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
         };
 
         var result = await userManager.CreateAsync(managerUser, "Manager123!");
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(managerUser, "Manager");
+            await userManager.AddToRoleAsync(managerUser, SystemRoles.Manager);
         }
     }
 
@@ -179,13 +184,167 @@ static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleMa
             Department = "Отдел разработки",
             IsActive = true,
             EmailConfirmed = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            ManagerId = managerUser?.Id,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
         };
 
         var result = await userManager.CreateAsync(employeeUser, "Employee123!");
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(employeeUser, "Employee");
+            await userManager.AddToRoleAsync(employeeUser, SystemRoles.Employee);
+        }
+    }
+
+    // Create legal department user
+    var legalEmail = "legal@documentflow.local";
+    var legalUser = await userManager.FindByEmailAsync(legalEmail);
+    
+    if (legalUser == null)
+    {
+        legalUser = new ApplicationUser
+        {
+            UserName = legalEmail,
+            Email = legalEmail,
+            FirstName = "Елена",
+            LastName = "Правова",
+            MiddleName = "Юрьевна",
+            Position = "Юрист",
+            Department = "Юридический отдел",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(legalUser, "Legal123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(legalUser, SystemRoles.LegalDepartment);
+        }
+    }
+
+    // Create auditor user
+    var auditorEmail = "auditor@documentflow.local";
+    var auditorUser = await userManager.FindByEmailAsync(auditorEmail);
+    
+    if (auditorUser == null)
+    {
+        auditorUser = new ApplicationUser
+        {
+            UserName = auditorEmail,
+            Email = auditorEmail,
+            FirstName = "Андрей",
+            LastName = "Проверкин",
+            MiddleName = "Контролевич",
+            Position = "Аудитор",
+            Department = "Отдел внутреннего аудита",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = false,
+            CanPrint = false,
+            CanDownload = false
+        };
+
+        var result = await userManager.CreateAsync(auditorUser, "Auditor123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(auditorUser, SystemRoles.Auditor);
+        }
+    }
+
+    // Create archivist user
+    var archivistEmail = "archivist@documentflow.local";
+    var archivistUser = await userManager.FindByEmailAsync(archivistEmail);
+    
+    if (archivistUser == null)
+    {
+        archivistUser = new ApplicationUser
+        {
+            UserName = archivistEmail,
+            Email = archivistEmail,
+            FirstName = "Ольга",
+            LastName = "Архивная",
+            MiddleName = "Сергеевна",
+            Position = "Архивариус",
+            Department = "Архив",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(archivistUser, "Archivist123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(archivistUser, SystemRoles.Archivist);
+        }
+    }
+
+    // Create reviewer user
+    var reviewerEmail = "reviewer@documentflow.local";
+    var reviewerUser = await userManager.FindByEmailAsync(reviewerEmail);
+    
+    if (reviewerUser == null)
+    {
+        reviewerUser = new ApplicationUser
+        {
+            UserName = reviewerEmail,
+            Email = reviewerEmail,
+            FirstName = "Сергей",
+            LastName = "Рецензентов",
+            MiddleName = "Петрович",
+            Position = "Старший специалист",
+            Department = "Отдел качества",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(reviewerUser, "Reviewer123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(reviewerUser, SystemRoles.Reviewer);
+        }
+    }
+
+    // Create compliance officer user
+    var complianceEmail = "compliance@documentflow.local";
+    var complianceUser = await userManager.FindByEmailAsync(complianceEmail);
+    
+    if (complianceUser == null)
+    {
+        complianceUser = new ApplicationUser
+        {
+            UserName = complianceEmail,
+            Email = complianceEmail,
+            FirstName = "Наталья",
+            LastName = "Соответствиева",
+            MiddleName = "Ивановна",
+            Position = "Специалист по соответствию",
+            Department = "Отдел комплаенс",
+            IsActive = true,
+            EmailConfirmed = true,
+            CreatedAt = DateTime.UtcNow,
+            CanExport = true,
+            CanPrint = true,
+            CanDownload = true
+        };
+
+        var result = await userManager.CreateAsync(complianceUser, "Compliance123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(complianceUser, SystemRoles.ComplianceOfficer);
         }
     }
 }
