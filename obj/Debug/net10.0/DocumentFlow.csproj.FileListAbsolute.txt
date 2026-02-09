@@ -149,7 +149,6 @@ C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\scopedcss\bundle\DocumentFlow.styles.css
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\scopedcss\projectbundle\DocumentFlow.bundle.scp.css
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\hkma5qlvk4-{0}-61n19gt1b8-61n19gt1b8.gz
-C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\uczsmqwuh4-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\z5k6z22bqa-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\y3oa3xqhr9-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\8x1u9v9572-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -222,5 +221,6 @@ C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\DocumentFlow.pdb
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\DocumentFlow.genruntimeconfig.cache
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\ref\DocumentFlow.dll
-C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\lyjyi0lurw-{0}-hb9jzth397-hb9jzth397.gz
 C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\DocumentFlow.sourcelink.json
+C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\lyjyi0lurw-{0}-p28hdkp3fs-p28hdkp3fs.gz
+C:\Users\daule\OneDrive\Desktop\курсовой проект ASP.Net\obj\Debug\net10.0\compressed\uczsmqwuh4-{0}-8p3ropesfn-8p3ropesfn.gz
