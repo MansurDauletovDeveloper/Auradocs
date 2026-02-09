@@ -5,111 +5,144 @@
     ViewData["Title"] = "Документы";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-folder me-2"></i>Документы</h2>
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
     <div>
-        <a asp-action="Export" class="btn btn-outline-secondary me-2">
-            <i class="bi bi-download me-1"></i>Экспорт CSV
+        <h2 class="mb-1 d-flex align-items-center gap-2">
+            <i class="bi bi-folder2-open text-primary"></i>
+            Документы
+        </h2>
+        <p class="text-muted mb-0">Управление документами организации</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a asp-action="Export" class="btn btn-outline-secondary">
+            <i class="bi bi-download me-1"></i>Экспорт
         </a>
         <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>Создать документ
+            <i class="bi bi-plus-lg me-1"></i>Новый документ
         </a>
     </div>
 </div>
 
-<!-- Фильтры -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form asp-action="Index" method="get">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Поиск</label>
+<!-- Filters -->
+<div class="filter-panel">
+    <form asp-action="Index" method="get">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Поиск</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
                     <input asp-for="SearchTerm" class="form-control" placeholder="Название или номер..." />
                 </div>
-                <div class="col-md-2">
-                    <label asp-for="DocumentType" class="form-label"></label>
-                    <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentType>()">
-                        <option value="">Все типы</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label asp-for="Status" class="form-label"></label>
-                    <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<DocumentStatus>()">
-                        <option value="">Все статусы</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label asp-for="DateFrom" class="form-label"></label>
-                    <input asp-for="DateFrom" class="form-control" type="date" />
-                </div>
-                <div class="col-md-2">
-                    <label asp-for="DateTo" class="form-label"></label>
-                    <input asp-for="DateTo" class="form-control" type="date" />
-                </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
             </div>
-        </form>
-    </div>
+            <div class="col-6 col-md-2">
+                <label asp-for="DocumentType" class="form-label">Тип</label>
+                <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentType>()">
+                    <option value="">Все типы</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label asp-for="Status" class="form-label">Статус</label>
+                <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<DocumentStatus>()">
+                    <option value="">Все</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label asp-for="DateFrom" class="form-label">Дата от</label>
+                <input asp-for="DateFrom" class="form-control" type="date" />
+            </div>
+            <div class="col-6 col-md-2">
+                <label asp-for="DateTo" class="form-label">Дата до</label>
+                <input asp-for="DateTo" class="form-control" type="date" />
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-filter"></i>
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 
-<!-- Таблица документов -->
-<div class="card">
-    <div class="card-body">
-        @if (Model.Documents.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
+<!-- Documents Table -->
+<div class="data-table">
+    @if (Model.Documents.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Рег. номер</th>
+                        <th>Название</th>
+                        <th class="d-none d-md-table-cell">Тип</th>
+                        <th class="d-none d-lg-table-cell">Автор</th>
+                        <th>Статус</th>
+                        <th class="d-none d-md-table-cell">Дата</th>
+                        <th class="d-none d-lg-table-cell">Версия</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var doc in Model.Documents)
+                    {
                         <tr>
-                            <th>Рег. номер</th>
-                            <th>Название</th>
-                            <th>Тип</th>
-                            <th>Автор</th>
-                            <th>Статус</th>
-                            <th>Дата</th>
-                            <th>Версия</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var doc in Model.Documents)
-                        {
-                            <tr>
-                                <td><code>@doc.RegistrationNumber</code></td>
-                                <td>
-                                    <a asp-action="Details" asp-route-id="@doc.Id" class="fw-semibold text-decoration-none">
-                                        @doc.Title
-                                    </a>
-                                </td>
-                                <td>@GetDocumentTypeName(doc.DocumentType)</td>
-                                <td>@doc.AuthorName</td>
-                                <td>
-                                    <span class="badge @GetStatusBadgeClass(doc.Status)">
-                                        @GetStatusName(doc.Status)
-                                    </span>
-                                </td>
-                                <td>@doc.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
-                                <td>v@doc.CurrentVersion</td>
-                                <td>
-                                    <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary">
+                            <td><code>@doc.RegistrationNumber</code></td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@doc.Id" class="fw-semibold text-decoration-none">
+                                    @doc.Title
+                                </a>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                <span class="text-muted">@GetDocumentTypeName(doc.DocumentType)</span>
+                            </td>
+                            <td class="d-none d-lg-table-cell">@doc.AuthorName</td>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(doc.Status)">
+                                    @GetStatusName(doc.Status)
+                                </span>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                <span class="text-muted">@doc.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
+                            </td>
+                            <td class="d-none d-lg-table-cell">
+                                <span class="badge bg-secondary">v@doc.CurrentVersion</span>
+                            </td>
+                            <td>
+                                <div class="row-actions">
+                                    <a asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-outline-primary" title="Просмотр">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
-            <!-- Пагинация -->
-            @if (Model.TotalPages > 1)
-            {
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 p-3 border-top">
+                <span class="text-muted small">
+                    Показано @Model.Documents.Count из @Model.TotalCount документов
+                </span>
                 <nav>
-                    <ul class="pagination justify-content-center">
+                    <ul class="pagination mb-0">
+                        @if (Model.Page > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" 
+                                   asp-route-page="@(Model.Page - 1)"
+                                   asp-route-searchTerm="@Model.SearchTerm"
+                                   asp-route-documentType="@Model.DocumentType"
+                                   asp-route-status="@Model.Status"
+                                   asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")"
+                                   asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        }
                         @for (int i = 1; i <= Model.TotalPages; i++)
                         {
                             <li class="page-item @(i == Model.Page ? "active" : "")">
@@ -122,23 +155,43 @@
                                    asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">@i</a>
                             </li>
                         }
+                        @if (Model.Page < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" 
+                                   asp-route-page="@(Model.Page + 1)"
+                                   asp-route-searchTerm="@Model.SearchTerm"
+                                   asp-route-documentType="@Model.DocumentType"
+                                   asp-route-status="@Model.Status"
+                                   asp-route-dateFrom="@Model.DateFrom?.ToString("yyyy-MM-dd")"
+                                   asp-route-dateTo="@Model.DateTo?.ToString("yyyy-MM-dd")">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </nav>
-            }
-            <p class="text-muted text-center">Показано @Model.Documents.Count из @Model.TotalCount документов</p>
+            </div>
         }
         else
         {
-            <div class="text-center py-5">
-                <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
-                <h5 class="mt-3 text-muted">Документы не найдены</h5>
-                <p class="text-muted">Попробуйте изменить параметры поиска или создайте новый документ</p>
-                <a asp-action="Create" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-1"></i>Создать документ
-                </a>
+            <div class="text-center text-muted small p-3 border-top">
+                Показано @Model.Documents.Count из @Model.TotalCount документов
             </div>
         }
-    </div>
+    }
+    else
+    {
+        <div class="empty-state py-5">
+            <i class="bi bi-inbox"></i>
+            <h5>Документы не найдены</h5>
+            <p class="mb-3">Попробуйте изменить параметры поиска или создайте новый документ</p>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Создать документ
+            </a>
+        </div>
+    }
+</div>
 </div>
 
 @functions {
@@ -167,7 +220,7 @@
     string GetStatusBadgeClass(DocumentStatus status) => status switch
     {
         DocumentStatus.Draft => "bg-secondary",
-        DocumentStatus.Pending => "bg-warning text-dark",
+        DocumentStatus.Pending => "bg-warning",
         DocumentStatus.Approved => "bg-success",
         DocumentStatus.Rejected => "bg-danger",
         DocumentStatus.Archived => "bg-info",

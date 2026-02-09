@@ -1,66 +1,89 @@
 @model DocumentFlow.Models.ViewModels.UserProfileViewModel
 @{
     ViewData["Title"] = "Мой профиль";
+    var initials = (!string.IsNullOrEmpty(Model.FirstName) && !string.IsNullOrEmpty(Model.LastName)) 
+        ? $"{Model.FirstName[0]}{Model.LastName[0]}" 
+        : "?";
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-person me-2"></i>Мой профиль</h4>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="user-avatar user-avatar-lg" style="background: rgba(255,255,255,0.2);">
+                        <span class="text-white fw-bold">@initials</span>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 text-white">Личный кабинет</h4>
+                        <small class="text-white-50">Управление профилем</small>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form asp-action="Profile" method="post">
                     <input type="hidden" asp-for="Id" />
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                     
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="LastName" class="form-label"></label>
+                    <h6 class="text-muted text-uppercase small fw-semibold mb-3">Персональные данные</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label asp-for="LastName" class="form-label">Фамилия</label>
                             <input asp-for="LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="FirstName" class="form-label"></label>
+                        <div class="col-md-4">
+                            <label asp-for="FirstName" class="form-label">Имя</label>
                             <input asp-for="FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="MiddleName" class="form-label"></label>
+                        <div class="col-md-4">
+                            <label asp-for="MiddleName" class="form-label">Отчество</label>
                             <input asp-for="MiddleName" class="form-control" />
-                            <span asp-validation-for="MiddleName" class="text-danger"></span>
+                            <span asp-validation-for="MiddleName" class="text-danger small"></span>
                         </div>
                     </div>
                     
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Email" class="form-label"></label>
-                            <input asp-for="Email" class="form-control" readonly />
+                    <h6 class="text-muted text-uppercase small fw-semibold mb-3">Контактная информация</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                                <input asp-for="Email" class="form-control" readonly style="background: var(--gray-50);" />
+                            </div>
+                            <small class="text-muted">Email нельзя изменить</small>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="PhoneNumber" class="form-label"></label>
-                            <input asp-for="PhoneNumber" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label">Телефон</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-phone-fill"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="+7 (___) ___-__-__" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Position" class="form-label"></label>
-                            <input asp-for="Position" class="form-control" />
+                    <h6 class="text-muted text-uppercase small fw-semibold mb-3">Рабочая информация</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Position" class="form-label">Должность</label>
+                            <input asp-for="Position" class="form-control" placeholder="Например: Специалист" />
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Department" class="form-label"></label>
-                            <input asp-for="Department" class="form-control" />
+                        <div class="col-md-6">
+                            <label asp-for="Department" class="form-label">Отдел</label>
+                            <input asp-for="Department" class="form-control" placeholder="Например: IT отдел" />
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-between">
+                    <hr class="my-4">
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                         <a asp-action="ChangePassword" class="btn btn-outline-secondary">
-                            <i class="bi bi-key me-1"></i>Сменить пароль
+                            <i class="bi bi-shield-lock me-1"></i>Сменить пароль
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check me-1"></i>Сохранить
+                            <i class="bi bi-check-lg me-1"></i>Сохранить изменения
                         </button>
                     </div>
                 </form>

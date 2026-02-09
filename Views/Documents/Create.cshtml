@@ -7,81 +7,108 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow">
+    <div class="col-lg-8">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Documents" asp-action="Index">Документы</a></li>
+                <li class="breadcrumb-item active">Создание</li>
+            </ol>
+        </nav>
+
+        <div class="card">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Создание документа</h4>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-box" style="background: rgba(255,255,255,0.2);">
+                        <i class="bi bi-file-earmark-plus text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 text-white">Новый документ</h4>
+                        <small class="text-white-50">Заполните информацию о документе</small>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                     
-                    <div class="mb-3">
-                        <label asp-for="Title" class="form-label"></label>
-                        <input asp-for="Title" class="form-control" placeholder="Введите название документа" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
+                    <!-- Title -->
+                    <div class="mb-4">
+                        <label asp-for="Title" class="form-label">Название документа</label>
+                        <input asp-for="Title" class="form-control form-control-lg" placeholder="Введите название" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
                     
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="DocumentType" class="form-label"></label>
+                    <!-- Type & Template -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="DocumentType" class="form-label">Тип документа</label>
                             <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentType>()">
-                                <option value="">-- Выберите тип --</option>
+                                <option value="">Выберите тип</option>
                             </select>
-                            <span asp-validation-for="DocumentType" class="text-danger"></span>
+                            <span asp-validation-for="DocumentType" class="text-danger small"></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="TemplateId" class="form-label">Шаблон (опционально)</label>
+                        <div class="col-md-6">
+                            <label asp-for="TemplateId" class="form-label">
+                                Шаблон <span class="text-muted small">(необязательно)</span>
+                            </label>
                             <select asp-for="TemplateId" class="form-select" asp-items="@templates">
-                                <option value="">-- Без шаблона --</option>
+                                <option value="">Без шаблона</option>
                             </select>
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label">Описание</label>
                         <textarea asp-for="Description" class="form-control" rows="3" 
-                                  placeholder="Краткое описание документа"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
+                                  placeholder="Краткое описание документа..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
 
-                    <ul class="nav nav-tabs mb-3" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#fileTab">
-                                <i class="bi bi-upload me-1"></i>Загрузить файл
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#contentTab">
-                                <i class="bi bi-pencil me-1"></i>Ввести текст
-                            </a>
-                        </li>
-                    </ul>
+                    <!-- Content Tabs -->
+                    <div class="mb-4">
+                        <label class="form-label">Содержимое документа</label>
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#fileTab">
+                                    <i class="bi bi-upload me-1"></i>Загрузить файл
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#contentTab">
+                                    <i class="bi bi-pencil me-1"></i>Ввести текст
+                                </a>
+                            </li>
+                        </ul>
 
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="fileTab">
-                            <div class="mb-3">
-                                <label asp-for="File" class="form-label">Файл документа</label>
-                                <input asp-for="File" class="form-control" type="file" 
-                                       accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.rtf,.odt" />
-                                <div class="form-text">Допустимые форматы: PDF, DOC, DOCX, XLS, XLSX, TXT, RTF, ODT. Максимальный размер: 50 МБ</div>
+                        <div class="tab-content border border-top-0 rounded-bottom p-4 bg-white">
+                            <div class="tab-pane fade show active" id="fileTab">
+                                <div class="upload-area p-4 border-2 border-dashed rounded text-center" 
+                                     style="border: 2px dashed var(--gray-300); background: var(--gray-50);">
+                                    <i class="bi bi-cloud-arrow-up text-primary" style="font-size: 2.5rem;"></i>
+                                    <p class="mb-2 mt-3 fw-medium">Перетащите файл сюда или нажмите для выбора</p>
+                                    <input asp-for="File" class="form-control" type="file" 
+                                           accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.rtf,.odt" />
+                                    <small class="text-muted d-block mt-2">
+                                        PDF, DOC, DOCX, XLS, XLSX, TXT, RTF, ODT — до 50 МБ
+                                    </small>
+                                </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="contentTab">
-                            <div class="mb-3">
-                                <label asp-for="Content" class="form-label">Содержимое документа</label>
-                                <textarea asp-for="Content" class="form-control" rows="10" 
+                            <div class="tab-pane fade" id="contentTab">
+                                <textarea asp-for="Content" class="form-control" rows="12" 
                                           placeholder="Введите текст документа..."></textarea>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-between">
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                         <a asp-action="Index" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Отмена
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check me-1"></i>Создать документ
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-lg me-1"></i>Создать документ
                         </button>
                     </div>
                 </form>
@@ -89,6 +116,14 @@
         </div>
     </div>
 </div>
+
+<style>
+    .border-dashed { border-style: dashed !important; }
+    .upload-area:hover { 
+        border-color: var(--primary-400) !important; 
+        background: var(--primary-50) !important;
+    }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

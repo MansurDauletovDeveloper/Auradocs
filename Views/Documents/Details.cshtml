@@ -7,97 +7,140 @@
     var approvers = ViewBag.Approvers as List<SelectListItem> ?? new List<SelectListItem>();
 }
 
-<div class="row mb-4">
-    <div class="col-md-8">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a asp-action="Index">Документы</a></li>
-                <li class="breadcrumb-item active">@Model.RegistrationNumber</li>
-            </ol>
-        </nav>
-        <h2>@Model.Title</h2>
-        <p class="text-muted">
-            <i class="bi bi-hash"></i> @Model.RegistrationNumber | 
-            <i class="bi bi-person"></i> @Model.AuthorName | 
-            <i class="bi bi-calendar"></i> @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
-        </p>
+<!-- Breadcrumb & Header -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Документы</a></li>
+        <li class="breadcrumb-item active">@Model.RegistrationNumber</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <h2 class="mb-0">@Model.Title</h2>
+            <span class="badge fs-6 @GetStatusBadgeClass(Model.Status)">
+                @GetStatusName(Model.Status)
+            </span>
+        </div>
+        <div class="d-flex flex-wrap gap-3 text-muted">
+            <span><i class="bi bi-hash me-1"></i>@Model.RegistrationNumber</span>
+            <span><i class="bi bi-person me-1"></i>@Model.AuthorName</span>
+            <span><i class="bi bi-calendar me-1"></i>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+        </div>
     </div>
-    <div class="col-md-4 text-end">
-        <span class="badge fs-6 @GetStatusBadgeClass(Model.Status)">
-            @GetStatusName(Model.Status)
-        </span>
-    </div>
+    @if (Model.CanEdit || Model.CanDelete || Model.CanSubmitForApproval)
+    {
+        <div class="d-flex flex-wrap gap-2">
+            @if (Model.CanEdit)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                    <i class="bi bi-pencil me-1"></i>Редактировать
+                </a>
+            }
+            @if (Model.CanSubmitForApproval)
+            {
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approvalModal">
+                    <i class="bi bi-send me-1"></i>На согласование
+                </button>
+            }
+            @if (Model.CanDelete)
+            {
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" 
+                      onsubmit="return confirm('Вы уверены, что хотите удалить этот документ?');">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i>Удалить
+                    </button>
+                </form>
+            }
+        </div>
+    }
 </div>
 
-<div class="row">
-    <!-- Основная информация -->
-    <div class="col-md-8">
+<div class="row g-4">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Document Info -->
         <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Информация о документе</h5>
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle text-primary"></i>
+                <h5 class="mb-0">Информация о документе</h5>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Тип:</strong> @GetDocumentTypeName(Model.DocumentType)</p>
-                        <p><strong>Текущая версия:</strong> v@Model.CurrentVersion</p>
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box-sm icon-box icon-box-primary">
+                                <i class="bi bi-tag-fill"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Тип документа</small>
+                                <span class="fw-medium">@GetDocumentTypeName(Model.DocumentType)</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <p><strong>Шаблон:</strong> @(Model.TemplateName ?? "Не использовался")</p>
-                        <p><strong>Обновлено:</strong> @Model.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box-sm icon-box icon-box-info">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Версия</small>
+                                <span class="fw-medium">v@Model.CurrentVersion</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box-sm icon-box icon-box-warning">
+                                <i class="bi bi-file-earmark-ruled"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Шаблон</small>
+                                <span class="fw-medium">@(Model.TemplateName ?? "Не использовался")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box-sm icon-box icon-box-success">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Обновлено</small>
+                                <span class="fw-medium">@Model.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 @if (!string.IsNullOrEmpty(Model.Description))
                 {
-                    <hr />
-                    <p><strong>Описание:</strong></p>
-                    <p>@Model.Description</p>
+                    <hr class="my-4" />
+                    <div>
+                        <small class="text-muted d-block mb-2">Описание</small>
+                        <p class="mb-0">@Model.Description</p>
+                    </div>
                 }
             </div>
-            @if (Model.CanEdit || Model.CanDelete || Model.CanSubmitForApproval)
-            {
-                <div class="card-footer">
-                    @if (Model.CanEdit)
-                    {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                            <i class="bi bi-pencil me-1"></i>Редактировать
-                        </a>
-                    }
-                    @if (Model.CanSubmitForApproval)
-                    {
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approvalModal">
-                            <i class="bi bi-send me-1"></i>Отправить на согласование
-                        </button>
-                    }
-                    @if (Model.CanDelete)
-                    {
-                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" 
-                              onsubmit="return confirm('Вы уверены, что хотите удалить этот документ?');">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash me-1"></i>Удалить
-                            </button>
-                        </form>
-                    }
-                </div>
-            }
         </div>
 
-        <!-- Версии документа -->
+        <!-- Version History -->
         <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>История версий</h5>
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history text-primary"></i>
+                <h5 class="mb-0">История версий</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 @if (Model.Versions.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-sm">
+                        <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Версия</th>
+                                    <th style="padding-left: 1.5rem;">Версия</th>
                                     <th>Файл</th>
-                                    <th>Размер</th>
-                                    <th>Автор</th>
+                                    <th class="d-none d-md-table-cell">Размер</th>
+                                    <th class="d-none d-md-table-cell">Автор</th>
                                     <th>Дата</th>
                                     <th></th>
                                 </tr>

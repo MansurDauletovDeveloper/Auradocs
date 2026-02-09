@@ -3,60 +3,94 @@
     ViewData["Title"] = "Создание пользователя";
 }
 
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Users">Пользователи</a></li>
+        <li class="breadcrumb-item active">Создание</li>
+    </ol>
+</nav>
+
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-person-plus me-2"></i>Создание пользователя</h4>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <div class="icon-box-sm icon-box-primary">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <h4 class="mb-0">Создание пользователя</h4>
             </div>
             <div class="card-body">
                 <form asp-action="CreateUser" method="post">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                     
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
+                    <!-- Name Section -->
+                    <div class="section-header mb-3">
+                        <i class="bi bi-person"></i>
+                        <span>Личные данные</span>
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
                             <label asp-for="LastName" class="form-label"></label>
                             <input asp-for="LastName" class="form-control" />
                             <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4">
                             <label asp-for="FirstName" class="form-label"></label>
                             <input asp-for="FirstName" class="form-control" />
                             <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4">
                             <label asp-for="MiddleName" class="form-label"></label>
                             <input asp-for="MiddleName" class="form-control" />
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <!-- Credentials Section -->
+                    <div class="section-header mb-3">
+                        <i class="bi bi-key"></i>
+                        <span>Учётные данные</span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
                             <label asp-for="Email" class="form-label"></label>
                             <input asp-for="Email" class="form-control" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label asp-for="Password" class="form-label"></label>
                             <input asp-for="Password" class="form-control" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <!-- Position Section -->
+                    <div class="section-header mb-3">
+                        <i class="bi bi-briefcase"></i>
+                        <span>Должность</span>
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
                             <label asp-for="Position" class="form-label"></label>
                             <input asp-for="Position" class="form-control" />
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label asp-for="Department" class="form-label"></label>
                             <input asp-for="Department" class="form-control" />
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Роли</label>
-                        <div class="row">
+                    <!-- Roles Section -->
+                    <div class="section-header mb-3">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Роли</span>
+                    </div>
+
+                    <div class="mb-4 pb-3 border-bottom">
+                        <div class="row g-3">
                             @foreach (var role in Model.AvailableRoles)
                             {
                                 <div class="col-md-4">
@@ -77,7 +111,7 @@
                             <i class="bi bi-arrow-left me-1"></i>Отмена
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check me-1"></i>Создать пользователя
+                            <i class="bi bi-check-lg me-1"></i>Создать пользователя
                         </button>
                     </div>
                 </form>

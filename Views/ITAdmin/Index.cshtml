@@ -3,239 +3,247 @@
     ViewData["Title"] = "IT Администрирование";
 }
 
-<div class="container-fluid px-4">
-    <h1 class="mt-4">
-        <i class="bi bi-gear-fill me-2"></i>IT Администрирование
-    </h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Панель управления</li>
-    </ol>
+<!-- Page Header -->
+<div class="mb-4">
+    <h2 class="mb-1 d-flex align-items-center gap-2">
+        <i class="bi bi-gear-fill text-primary"></i>
+        IT Администрирование
+    </h2>
+    <p class="text-muted mb-0">Управление пользователями, ролями и безопасностью</p>
+</div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-    <!-- Статистика -->
-    <div class="row">
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small text-white-50">Всего пользователей</div>
-                            <div class="display-6">@Model.TotalUsers</div>
-                        </div>
-                        <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.5;"></i>
-                    </div>
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="stat-label">Всего пользователей</p>
+                    <p class="stat-value">@Model.TotalUsers</p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" asp-action="Users">Управление пользователями</a>
-                    <i class="bi bi-arrow-right text-white"></i>
+                <div class="icon-box icon-box-primary">
+                    <i class="bi bi-people-fill"></i>
                 </div>
             </div>
+            <a asp-action="Users" class="stat-link">
+                Управление пользователями <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-success text-white mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small text-white-50">Активных пользователей</div>
-                            <div class="display-6">@Model.ActiveUsers</div>
-                        </div>
-                        <i class="bi bi-person-check-fill" style="font-size: 3rem; opacity: 0.5;"></i>
-                    </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="stat-label">Активных пользователей</p>
+                    <p class="stat-value text-success">@Model.ActiveUsers</p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" asp-action="Sessions">Мониторинг сессий</a>
-                    <i class="bi bi-arrow-right text-white"></i>
+                <div class="icon-box icon-box-success">
+                    <i class="bi bi-person-check-fill"></i>
                 </div>
             </div>
+            <a asp-action="Sessions" class="stat-link">
+                Мониторинг сессий <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-warning text-dark mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small text-dark opacity-75">Ролей в системе</div>
-                            <div class="display-6">@Model.TotalRoles</div>
-                        </div>
-                        <i class="bi bi-shield-lock-fill" style="font-size: 3rem; opacity: 0.5;"></i>
-                    </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="stat-label">Ролей в системе</p>
+                    <p class="stat-value text-warning">@Model.TotalRoles</p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-dark stretched-link" asp-action="Roles">Справочник ролей</a>
-                    <i class="bi bi-arrow-right text-dark"></i>
+                <div class="icon-box icon-box-warning">
+                    <i class="bi bi-shield-lock-fill"></i>
                 </div>
             </div>
+            <a asp-action="Roles" class="stat-link">
+                Справочник ролей <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-info text-white mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small text-white-50">Тестовые аккаунты</div>
-                            <div class="display-6"><i class="bi bi-key"></i></div>
-                        </div>
-                        <i class="bi bi-person-lines-fill" style="font-size: 3rem; opacity: 0.5;"></i>
-                    </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="stat-label">Тестовые аккаунты</p>
+                    <p class="stat-value text-info"><i class="bi bi-key"></i></p>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" asp-action="TestAccounts">Логины и пароли</a>
-                    <i class="bi bi-arrow-right text-white"></i>
+                <div class="icon-box icon-box-info">
+                    <i class="bi bi-person-lines-fill"></i>
+                </div>
+            </div>
+            <a asp-action="TestAccounts" class="stat-link">
+                Логины и пароли <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Role Statistics and Recent Logins -->
+<div class="row g-4 mb-4">
+    <!-- Role Distribution -->
+    <div class="col-xl-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center gap-2">
+                <div class="icon-box-sm icon-box-light">
+                    <i class="bi bi-bar-chart-fill"></i>
+                </div>
+                <span>Распределение по ролям</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table data-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Роль</th>
+                                <th class="text-center">Пользователей</th>
+                                <th style="width: 60px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in Model.RoleStatistics.OrderByDescending(r => r.UserCount))
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@role.DisplayName</strong>
+                                        <div class="text-muted small">@role.RoleName</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge @(role.UserCount > 0 ? "bg-primary" : "bg-secondary")">
+                                            @role.UserCount
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Users" asp-route-roleFilter="@role.RoleName" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Статистика ролей -->
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="bi bi-bar-chart-fill me-1"></i>
-                    Распределение пользователей по ролям
+    <!-- Recent Logins -->
+    <div class="col-xl-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center gap-2">
+                <div class="icon-box-sm icon-box-light">
+                    <i class="bi bi-clock-history"></i>
                 </div>
-                <div class="card-body">
+                <span>Последние входы</span>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.RecentLogins.Any())
+                {
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover">
+                        <table class="table data-table mb-0">
                             <thead>
                                 <tr>
-                                    <th>Роль</th>
-                                    <th class="text-center">Пользователей</th>
-                                    <th></th>
+                                    <th>Пользователь</th>
+                                    <th>Роли</th>
+                                    <th>Время</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var role in Model.RoleStatistics.OrderByDescending(r => r.UserCount))
+                                @foreach (var login in Model.RecentLogins)
                                 {
                                     <tr>
                                         <td>
-                                            <strong>@role.DisplayName</strong>
-                                            <br />
-                                            <small class="text-muted">@role.RoleName</small>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="user-avatar user-avatar-sm">
+                                                    @(login.UserName?.FirstOrDefault().ToString().ToUpper() ?? "?")
+                                                </div>
+                                                <div>
+                                                    <a asp-action="UserLoginHistory" asp-route-id="@login.UserId" class="text-decoration-none">
+                                                        @login.UserName
+                                                    </a>
+                                                    <div class="text-muted small">@login.Email</div>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-@(role.UserCount > 0 ? "primary" : "secondary") rounded-pill">
-                                                @role.UserCount
-                                            </span>
+                                        <td>
+                                            @foreach (var role in login.Roles.Take(2))
+                                            {
+                                                <span class="badge bg-secondary me-1">@role</span>
+                                            }
+                                            @if (login.Roles.Count > 2)
+                                            {
+                                                <span class="badge bg-light text-dark">+@(login.Roles.Count - 2)</span>
+                                            }
                                         </td>
-                                        <td class="text-end">
-                                            <a asp-action="Users" asp-route-roleFilter="@role.RoleName" 
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
+                                        <td>
+                                            <span class="text-muted">@login.LoginTime.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
                                         </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Последние входы -->
-        <div class="col-xl-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="bi bi-clock-history me-1"></i>
-                    Последние входы в систему
-                </div>
-                <div class="card-body">
-                    @if (Model.RecentLogins.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Пользователь</th>
-                                        <th>Роли</th>
-                                        <th>Время</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var login in Model.RecentLogins)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <a asp-action="UserLoginHistory" asp-route-id="@login.UserId">
-                                                    @login.UserName
-                                                </a>
-                                                <br />
-                                                <small class="text-muted">@login.Email</small>
-                                            </td>
-                                            <td>
-                                                @foreach (var role in login.Roles.Take(2))
-                                                {
-                                                    <span class="badge bg-secondary me-1">@role</span>
-                                                }
-                                                @if (login.Roles.Count > 2)
-                                                {
-                                                    <span class="badge bg-light text-dark">+@(login.Roles.Count - 2)</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <small>@login.LoginTime.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-end">
-                            <a asp-action="Sessions" class="btn btn-sm btn-outline-primary">
-                                Показать все <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center text-muted py-4">
-                            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                            <p class="mt-2">Нет записей о входах</p>
-                        </div>
-                    }
-                </div>
+                    <div class="card-footer bg-transparent text-end">
+                        <a asp-action="Sessions" class="btn btn-sm btn-outline-primary">
+                            Показать все <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state py-5">
+                        <i class="bi bi-inbox"></i>
+                        <h5>Нет записей о входах</h5>
+                    </div>
+                }
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Быстрые действия -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="bi bi-lightning-fill me-1"></i>
-            Быстрые действия
+<!-- Quick Actions -->
+<div class="card">
+    <div class="card-header d-flex align-items-center gap-2">
+        <div class="icon-box-sm icon-box-light">
+            <i class="bi bi-lightning-fill"></i>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <a asp-action="Users" class="btn btn-outline-primary w-100 py-3">
-                        <i class="bi bi-people d-block" style="font-size: 2rem;"></i>
-                        Все пользователи
-                    </a>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <a asp-action="Roles" class="btn btn-outline-warning w-100 py-3">
-                        <i class="bi bi-shield-lock d-block" style="font-size: 2rem;"></i>
-                        Справочник ролей
-                    </a>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <a asp-action="Sessions" class="btn btn-outline-success w-100 py-3">
-                        <i class="bi bi-activity d-block" style="font-size: 2rem;"></i>
-                        Мониторинг сессий
-                    </a>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <a asp-action="TestAccounts" class="btn btn-outline-info w-100 py-3">
-                        <i class="bi bi-key d-block" style="font-size: 2rem;"></i>
-                        Тестовые аккаунты
-                    </a>
-                </div>
+        <span>Быстрые действия</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a asp-action="Users" class="btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-people d-block mb-2" style="font-size: 1.5rem;"></i>
+                    Все пользователи
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a asp-action="Roles" class="btn btn-outline-warning w-100 py-3">
+                    <i class="bi bi-shield-lock d-block mb-2" style="font-size: 1.5rem;"></i>
+                    Справочник ролей
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a asp-action="Sessions" class="btn btn-outline-success w-100 py-3">
+                    <i class="bi bi-activity d-block mb-2" style="font-size: 1.5rem;"></i>
+                    Мониторинг сессий
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a asp-action="TestAccounts" class="btn btn-outline-info w-100 py-3">
+                    <i class="bi bi-key d-block mb-2" style="font-size: 1.5rem;"></i>
+                    Тестовые аккаунты
+                </a>
             </div>
         </div>
     </div>

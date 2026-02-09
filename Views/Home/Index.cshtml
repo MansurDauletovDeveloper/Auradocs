@@ -1,8 +1,71 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "DocFlow";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="auth-wrapper">
+    <div class="text-center" style="max-width: 600px;">
+        <div class="mb-4">
+            <i class="bi bi-stack text-primary" style="font-size: 5rem;"></i>
+        </div>
+        <h1 class="display-5 fw-bold mb-3">
+            <span class="text-gradient">DocFlow</span>
+        </h1>
+        <p class="lead text-muted mb-4">
+            Современная система электронного документооборота для эффективного управления документами вашей организации
+        </p>
+        
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-grid-1x2-fill me-2"></i>Перейти в систему
+            </a>
+        }
+        else
+        {
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Войти
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary btn-lg px-5">
+                    <i class="bi bi-person-plus me-2"></i>Регистрация
+                </a>
+            </div>
+        }
+        
+        <div class="row g-4 mt-5 text-start">
+            <div class="col-md-4">
+                <div class="d-flex gap-3">
+                    <div class="icon-box icon-box-primary flex-shrink-0">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-semibold mb-1">Документы</h6>
+                        <small class="text-muted">Создание, редактирование и хранение документов</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex gap-3">
+                    <div class="icon-box icon-box-success flex-shrink-0">
+                        <i class="bi bi-clipboard2-check"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-semibold mb-1">Согласование</h6>
+                        <small class="text-muted">Гибкие маршруты согласования документов</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex gap-3">
+                    <div class="icon-box icon-box-warning flex-shrink-0">
+                        <i class="bi bi-bell"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-semibold mb-1">Уведомления</h6>
+                        <small class="text-muted">Мгновенные оповещения о событиях</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
