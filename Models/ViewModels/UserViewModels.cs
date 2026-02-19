@@ -99,9 +99,9 @@ namespace DocumentFlow.Models.ViewModels
         public string? Department { get; set; }
 
         [Required(ErrorMessage = "Введите пароль")]
-        [StringLength(100, ErrorMessage = "Пароль должен содержать минимум {2} символов", MinimumLength = 6)]
+        [StringLength(128, ErrorMessage = "Пароль должен содержать от {2} до {1} символов", MinimumLength = 8)]
         [DataType(DataType.Password)]
-        [Display(Name = "Пароль")]
+        [Display(Name = "Временный пароль")]
         public string Password { get; set; } = string.Empty;
 
         [Display(Name = "Роли")]

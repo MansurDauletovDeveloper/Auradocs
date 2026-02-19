@@ -79,6 +79,24 @@ namespace DocumentFlow.Models.Entities
         [Display(Name = "Последний вход")]
         public DateTime? LastLoginAt { get; set; }
 
+        /// <summary>
+        /// Требуется смена пароля при следующем входе
+        /// </summary>
+        [Display(Name = "Требуется смена пароля")]
+        public bool MustChangePassword { get; set; } = false;
+
+        /// <summary>
+        /// Дата последней смены пароля
+        /// </summary>
+        [Display(Name = "Пароль изменён")]
+        public DateTime? PasswordChangedAt { get; set; }
+
+        /// <summary>
+        /// Дата последней отправки кода верификации
+        /// </summary>
+        [Display(Name = "Код отправлен")]
+        public DateTime? VerificationCodeSentAt { get; set; }
+
         [Display(Name = "Полное имя")]
         public string FullName => $"{LastName} {FirstName} {MiddleName}".Trim();
 

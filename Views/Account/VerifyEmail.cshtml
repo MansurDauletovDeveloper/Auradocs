@@ -1,0 +1,144 @@
+@model DocumentFlow.Models.ViewModels.VerifyEmailViewModel
+@{
+    ViewData["Title"] = "Подтверждение email";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow mt-5">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-envelope-check me-2"></i>Подтверждение email
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["InfoMessage"] != null)
+                    {
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>@TempData["InfoMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted">
+                            На адрес <strong>@Model.Email</strong> отправлен 6-значный код подтверждения.
+                            Введите его ниже.
+                        </p>
+                    </div>
+
+                    <form asp-action="VerifyEmail" method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="ReturnUrl" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Code" class="form-label"></label>
+                            <input asp-for="Code" class="form-control form-control-lg text-center" 
+                                   placeholder="000000" maxlength="6" 
+                                   style="letter-spacing: 0.5em; font-size: 1.5rem; font-weight: bold;" 
+                                   autofocus />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check2 me-2"></i>Подтвердить
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4" />
+
+                    <div class="text-center">
+                        <p class="text-muted small mb-2">Не получили код?</p>
+                        <form asp-action="ResendVerificationCode" method="post" class="d-inline">
+                            <input type="hidden" name="userId" value="@Model.UserId" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                            @if (Model.SecondsToResend.HasValue && Model.SecondsToResend > 0)
+                            {
+                                <button type="button" class="btn btn-outline-secondary btn-sm" disabled id="resendBtn">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>
+                                    Отправить повторно (<span id="countdown">@Model.SecondsToResend</span> сек)
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Отправить повторно
+                                </button>
+                            }
+                        </form>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a asp-action="Login" class="text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i>Вернуться к входу
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3 border-info">
+                <div class="card-body small text-muted">
+                    <i class="bi bi-shield-check me-2 text-info"></i>
+                    <strong>Безопасность:</strong> Код действителен 10 минут. 
+                    После 5 неудачных попыток необходимо запросить новый код.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    @if (Model.SecondsToResend.HasValue && Model.SecondsToResend > 0)
+    {
+        <script>
+            (function() {
+                var seconds = @Model.SecondsToResend;
+                var countdownEl = document.getElementById('countdown');
+                var btnEl = document.getElementById('resendBtn');
+                
+                var timer = setInterval(function() {
+                    seconds--;
+                    if (seconds <= 0) {
+                        clearInterval(timer);
+                        location.reload();
+                    } else {
+                        countdownEl.textContent = seconds;
+                    }
+                }, 1000);
+            })();
+        </script>
+    }
+
+    <script>
+        // Автоматическая отправка при вводе 6 символов
+        document.getElementById('Code').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length === 6) {
+                this.form.submit();
+            }
+        });
+    </script>
+}

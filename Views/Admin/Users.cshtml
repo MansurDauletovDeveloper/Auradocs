@@ -131,11 +131,23 @@
                                 <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary" title="Редактировать">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                <form asp-action="ResetUserPassword" asp-route-id="@user.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Сбросить пароль"
+                                            onclick="return confirm('Сбросить пароль для пользователя @user.FullName?');">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                </form>
                                 <form asp-action="ToggleUserStatus" asp-route-id="@user.Id" method="post" class="d-inline">
                                     <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-outline-warning" : "btn-outline-success")"
                                             title="@(user.IsActive ? "Заблокировать" : "Активировать")"
                                             onclick="return confirm('@(user.IsActive ? "Заблокировать" : "Активировать") пользователя?');">
                                         <i class="bi @(user.IsActive ? "bi-lock" : "bi-unlock")"></i>
+                                    </button>
+                                </form>
+                                <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить пользователя"
+                                            onclick="return confirm('ВНИМАНИЕ! Удалить пользователя @user.FullName? Это действие необратимо.');">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>

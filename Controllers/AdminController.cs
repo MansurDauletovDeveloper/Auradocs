@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace DocumentFlow.Controllers
 {
@@ -16,15 +17,21 @@ namespace DocumentFlow.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IAuditService _auditService;
+        private readonly IEmailVerificationService _emailVerificationService;
+        private readonly IPasswordValidatorService _passwordValidatorService;
 
         public AdminController(
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IAuditService auditService)
+            IAuditService auditService,
+            IEmailVerificationService emailVerificationService,
+            IPasswordValidatorService passwordValidatorService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _auditService = auditService;
+            _emailVerificationService = emailVerificationService;
+            _passwordValidatorService = passwordValidatorService;
         }
 
         #region Users Management
@@ -73,6 +80,18 @@ namespace DocumentFlow.Controllers
                 return View(model);
             }
 
+            // Валидация пароля
+            var passwordValidation = _passwordValidatorService.Validate(model.Password);
+            if (!passwordValidation.IsValid)
+            {
+                foreach (var error in passwordValidation.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+                model.AvailableRoles = await GetRolesAsync();
+                return View(model);
+            }
+
             var user = new ApplicationUser
             {
                 UserName = model.Email,
@@ -83,7 +102,9 @@ namespace DocumentFlow.Controllers
                 Position = model.Position,
                 Department = model.Department,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EmailConfirmed = false, // Требуется подтверждение email
+                MustChangePassword = true // Требуется смена пароля при первом входе
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -106,7 +127,7 @@ namespace DocumentFlow.Controllers
                         $"Создан пользователь: {user.FullName}", entityName: "User", entityId: user.Id);
                 }
 
-                TempData["SuccessMessage"] = "Пользователь успешно создан.";
+                TempData["SuccessMessage"] = $"Пользователь {user.FullName} успешно создан. Временный пароль: {model.Password}. При первом входе пользователь должен подтвердить email и сменить пароль.";
                 return RedirectToAction(nameof(Users));
             }
 
@@ -222,6 +243,110 @@ namespace DocumentFlow.Controllers
                 : "Пользователь заблокирован.";
             
             return RedirectToAction(nameof(Users));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetUserPassword(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            // Генерируем новый временный пароль
+            var tempPassword = GenerateTemporaryPassword();
+
+            // Сбрасываем пароль
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, tempPassword);
+
+            if (result.Succeeded)
+            {
+                // Устанавливаем флаг обязательной смены пароля
+                user.MustChangePassword = true;
+                user.EmailConfirmed = false; // Требуем повторное подтверждение email
+                await _userManager.UpdateAsync(user);
+
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    await _auditService.LogAsync(currentUser.Id, AuditActionType.UserModified,
+                        $"Сброшен пароль пользователя: {user.FullName}", entityName: "User", entityId: user.Id);
+                }
+
+                TempData["SuccessMessage"] = $"Пароль пользователя {user.FullName} сброшен. Новый временный пароль: {tempPassword}";
+                return RedirectToAction(nameof(Users));
+            }
+
+            TempData["ErrorMessage"] = "Не удалось сбросить пароль: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            return RedirectToAction(nameof(Users));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            // Проверка, что пользователь не удаляет сам себя
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser?.Id == id)
+            {
+                TempData["ErrorMessage"] = "Вы не можете удалить свою учётную запись.";
+                return RedirectToAction(nameof(Users));
+            }
+
+            var userName = user.FullName;
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+            {
+                if (currentUser != null)
+                {
+                    await _auditService.LogAsync(currentUser.Id, AuditActionType.UserModified,
+                        $"Удалён пользователь: {userName}", entityName: "User", entityId: id);
+                }
+
+                TempData["SuccessMessage"] = $"Пользователь {userName} удалён.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Не удалось удалить пользователя: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+
+            return RedirectToAction(nameof(Users));
+        }
+
+        /// <summary>
+        /// Генерирует безопасный временный пароль
+        /// </summary>
+        private static string GenerateTemporaryPassword()
+        {
+            const string uppercase = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            const string lowercase = "abcdefghjkmnpqrstuvwxyz";
+            const string digits = "23456789";
+            const string special = "!@#$%^&*";
+
+            var password = new char[12];
+            using var rng = RandomNumberGenerator.Create();
+            var bytes = new byte[12];
+            rng.GetBytes(bytes);
+
+            // Гарантируем наличие всех типов символов
+            password[0] = uppercase[bytes[0] % uppercase.Length];
+            password[1] = lowercase[bytes[1] % lowercase.Length];
+            password[2] = digits[bytes[2] % digits.Length];
+            password[3] = special[bytes[3] % special.Length];
+
+            // Заполняем остальные символы случайными
+            var allChars = uppercase + lowercase + digits + special;
+            for (int i = 4; i < 12; i++)
+            {
+                password[i] = allChars[bytes[i] % allChars.Length];
+            }
+
+            // Перемешиваем
+            return new string(password.OrderBy(x => Guid.NewGuid()).ToArray());
         }
 
         #endregion

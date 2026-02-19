@@ -61,9 +61,38 @@
                         </div>
                         <div class="col-md-6">
                             <label asp-for="Password" class="form-label"></label>
-                            <input asp-for="Password" class="form-control" />
+                            <div class="input-group">
+                                <input asp-for="Password" class="form-control" id="passwordInput" />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                             <span asp-validation-for="Password" class="text-danger"></span>
+                            
+                            <!-- Индикатор силы пароля -->
+                            <div class="mt-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" id="strengthBar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="strengthText" class="text-muted"></small>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="alert alert-info mb-4">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle me-1"></i>Требования к паролю:</h6>
+                        <ul class="mb-0 small">
+                            <li id="reqLength"><i class="bi bi-circle"></i> Минимум 8 символов</li>
+                            <li id="reqUppercase"><i class="bi bi-circle"></i> Заглавная буква (A-Z)</li>
+                            <li id="reqLowercase"><i class="bi bi-circle"></i> Строчная буква (a-z)</li>
+                            <li id="reqDigit"><i class="bi bi-circle"></i> Цифра (0-9)</li>
+                            <li id="reqSpecial"><i class="bi bi-circle"></i> Специальный символ (!@@#$%^&*)</li>
+                        </ul>
+                        <hr>
+                        <p class="mb-0 small text-muted">
+                            <i class="bi bi-shield-check me-1"></i>
+                            При первом входе пользователь должен подтвердить email и сменить пароль.
+                        </p>
                     </div>
 
                     <!-- Position Section -->
@@ -119,6 +148,98 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        (function() {
+            var passwordInput = document.getElementById('passwordInput');
+            var strengthBar = document.getElementById('strengthBar');
+            var strengthText = document.getElementById('strengthText');
+            var toggleBtn = document.getElementById('togglePassword');
+            
+            function checkRequirements(password) {
+                var requirements = {
+                    length: password.length >= 8,
+                    uppercase: /[A-ZА-ЯЁ]/.test(password),
+                    lowercase: /[a-zа-яё]/.test(password),
+                    digit: /\d/.test(password),
+                    special: /[!@@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)
+                };
+                
+                updateRequirement('reqLength', requirements.length);
+                updateRequirement('reqUppercase', requirements.uppercase);
+                updateRequirement('reqLowercase', requirements.lowercase);
+                updateRequirement('reqDigit', requirements.digit);
+                updateRequirement('reqSpecial', requirements.special);
+                
+                return requirements;
+            }
+            
+            function updateRequirement(elementId, isMet) {
+                var el = document.getElementById(elementId);
+                if (isMet) {
+                    el.innerHTML = el.innerHTML.replace('bi-circle', 'bi-check-circle-fill text-success');
+                } else {
+                    el.innerHTML = el.innerHTML.replace('bi-check-circle-fill text-success', 'bi-circle');
+                }
+            }
+            
+            function calculateStrength(password) {
+                var score = 0;
+                var reqs = checkRequirements(password);
+                
+                if (reqs.length) score += 20;
+                if (password.length >= 12) score += 10;
+                if (reqs.uppercase) score += 15;
+                if (reqs.lowercase) score += 15;
+                if (reqs.digit) score += 15;
+                if (reqs.special) score += 15;
+                if (password.length >= 16) score += 10;
+                
+                return Math.min(100, score);
+            }
+            
+            function updateStrengthIndicator(password) {
+                var score = calculateStrength(password);
+                strengthBar.style.width = score + '%';
+                
+                if (score < 30) {
+                    strengthBar.className = 'progress-bar bg-danger';
+                    strengthText.textContent = 'Очень слабый';
+                    strengthText.className = 'text-danger small';
+                } else if (score < 50) {
+                    strengthBar.className = 'progress-bar bg-warning';
+                    strengthText.textContent = 'Слабый';
+                    strengthText.className = 'text-warning small';
+                } else if (score < 70) {
+                    strengthBar.className = 'progress-bar bg-info';
+                    strengthText.textContent = 'Средний';
+                    strengthText.className = 'text-info small';
+                } else if (score < 90) {
+                    strengthBar.className = 'progress-bar bg-primary';
+                    strengthText.textContent = 'Хороший';
+                    strengthText.className = 'text-primary small';
+                } else {
+                    strengthBar.className = 'progress-bar bg-success';
+                    strengthText.textContent = 'Отличный';
+                    strengthText.className = 'text-success small';
+                }
+            }
+            
+            passwordInput.addEventListener('input', function() {
+                updateStrengthIndicator(this.value);
+            });
+            
+            toggleBtn.addEventListener('click', function() {
+                var type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+            });
+        })();
+    </script>
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

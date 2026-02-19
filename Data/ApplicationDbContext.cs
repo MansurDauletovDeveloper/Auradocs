@@ -24,6 +24,8 @@ namespace DocumentFlow.Data
         public DbSet<UserDelegation> UserDelegations { get; set; }
         public DbSet<DocumentAccess> DocumentAccesses { get; set; }
         public DbSet<DocumentBlock> DocumentBlocks { get; set; }
+        public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
+        public DbSet<LoginHistory> LoginHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -20,46 +20,61 @@ namespace DocumentFlow.Models.ViewModels
         public string? ReturnUrl { get; set; }
     }
 
-    public class RegisterViewModel
+    /// <summary>
+    /// Модель для подтверждения email кодом
+    /// </summary>
+    public class VerifyEmailViewModel
     {
-        [Required(ErrorMessage = "Введите email")]
-        [EmailAddress(ErrorMessage = "Неверный формат email")]
-        [Display(Name = "Email")]
+        public string UserId { get; set; } = string.Empty;
+        
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Введите имя")]
-        [StringLength(100, ErrorMessage = "Имя должно содержать от {2} до {1} символов", MinimumLength = 2)]
-        [Display(Name = "Имя")]
-        public string FirstName { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Введите код подтверждения")]
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "Код должен содержать 6 цифр")]
+        [Display(Name = "Код подтверждения")]
+        public string Code { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Введите фамилию")]
-        [StringLength(100, ErrorMessage = "Фамилия должна содержать от {2} до {1} символов", MinimumLength = 2)]
-        [Display(Name = "Фамилия")]
-        public string LastName { get; set; } = string.Empty;
+        public string? ReturnUrl { get; set; }
+        
+        public int? SecondsToResend { get; set; }
+    }
 
-        [StringLength(100)]
-        [Display(Name = "Отчество")]
-        public string? MiddleName { get; set; }
+    /// <summary>
+    /// Модель для принудительной смены пароля
+    /// </summary>
+    public class ForceChangePasswordViewModel
+    {
+        public string UserId { get; set; } = string.Empty;
+        
+        public string Email { get; set; } = string.Empty;
 
-        [StringLength(200)]
-        [Display(Name = "Должность")]
-        public string? Position { get; set; }
-
-        [StringLength(200)]
-        [Display(Name = "Отдел")]
-        public string? Department { get; set; }
-
-        [Required(ErrorMessage = "Введите пароль")]
-        [StringLength(100, ErrorMessage = "Пароль должен содержать минимум {2} символов", MinimumLength = 6)]
+        [Required(ErrorMessage = "Введите новый пароль")]
+        [StringLength(128, ErrorMessage = "Пароль должен содержать от {2} до {1} символов", MinimumLength = 8)]
         [DataType(DataType.Password)]
-        [Display(Name = "Пароль")]
-        public string Password { get; set; } = string.Empty;
+        [Display(Name = "Новый пароль")]
+        public string NewPassword { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
         [Display(Name = "Подтверждение пароля")]
-        [Compare("Password", ErrorMessage = "Пароли не совпадают")]
+        [Compare("NewPassword", ErrorMessage = "Пароли не совпадают")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        public string? ReturnUrl { get; set; }
     }
+
+    /// <summary>
+    /// Результат проверки силы пароля (для клиентской валидации)
+    /// </summary>
+    public class PasswordStrengthResult
+    {
+        public bool IsValid { get; set; }
+        public List<string> Errors { get; set; } = new();
+        public int StrengthScore { get; set; }
+        public string StrengthLevel { get; set; } = string.Empty;
+    }
+
+    // RegisterViewModel удалён - самостоятельная регистрация отключена
+    // Пользователи создаются только администратором
 
     public class UserProfileViewModel
     {
@@ -100,7 +115,7 @@ namespace DocumentFlow.Models.ViewModels
         public string CurrentPassword { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Введите новый пароль")]
-        [StringLength(100, ErrorMessage = "Пароль должен содержать минимум {2} символов", MinimumLength = 6)]
+        [StringLength(128, ErrorMessage = "Пароль должен содержать от {2} до {1} символов", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "Новый пароль")]
         public string NewPassword { get; set; } = string.Empty;

@@ -16,32 +16,40 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // Password settings
+    // Password settings - усиленная политика паролей
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = true; // Теперь требуется спец. символ
+    options.Password.RequiredLength = 8; // Минимум 8 символов
+    options.Password.RequiredUniqueChars = 4; // Минимум 4 уникальных символа
     
-    // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    // Lockout settings - защита от brute-force
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
     
     // User settings
     options.User.RequireUniqueEmail = true;
+    
+    // SignIn settings - требуется подтверждённый email
+    options.SignIn.RequireConfirmedEmail = false; // Обрабатываем вручную в контроллере
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddPasswordValidator<PasswordValidatorService>(); // Кастомный валидатор паролей
 
-// Cookie settings
+// Cookie settings - настройки безопасности сессий
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.ExpireTimeSpan = TimeSpan.FromHours(8); // Сессия 8 часов
     options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true; // Защита от XSS
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // HTTPS в продакшене
+    options.Cookie.SameSite = SameSiteMode.Strict; // Защита от CSRF
 });
 
 // Application Services
@@ -54,6 +62,10 @@ builder.Services.AddScoped<IDocumentVersionService, DocumentVersionService>();
 builder.Services.AddScoped<IApprovalService, ApprovalService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
+
+// Security Services - новые сервисы безопасности
+builder.Services.AddScoped<IPasswordValidatorService, PasswordValidatorService>();
+builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 
 var app = builder.Build();
 
