@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Task 5 - XML Validation & Transformation";
+}
+
+<div class="container mt-4">
+    <h2>Task 5: XML Validation against XSD and XSLT Transformation</h2>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form asp-controller="Xml" asp-action="Task5" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="uploadedXml" class="form-label">Upload XML File to Validate</label>
+                    <input class="form-control" type="file" id="uploadedXml" name="uploadedXml" accept=".xml" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Validate and Upload</button>
+            </form>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+
+    @if (ViewBag.ValidationErrors != null)
+    {
+        <div class="alert alert-danger mt-3">
+            <h4>Validation Errors:</h4>
+            <ul>
+                @foreach (var error in ViewBag.ValidationErrors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        </div>
+    }
+    else if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success mt-3">
+            @ViewBag.Message
+        </div>
+    }
+
+    @if (ViewBag.TransformedHtml != null)
+    {
+        <h3 class="mt-4">Transformation Result</h3>
+        <div class="card p-3 shadow-sm border-success">
+            @Html.Raw(ViewBag.TransformedHtml)
+        </div>
+    }
+</div>

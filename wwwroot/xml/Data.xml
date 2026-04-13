@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documents>
+    <Document>
+        <Id>1</Id>
+        <Title>Project Proposal</Title>
+        <Author>John Doe</Author>
+        <Date>2026-01-15</Date>
+    </Document>
+    <Document>
+        <Id>2</Id>
+        <Title>Design Specs</Title>
+        <Author>Jane Smith</Author>
+        <Date>2026-02-20</Date>
+    </Document>
+    <Document>
+        <Id>3</Id>
+        <Title>XML Requirements</Title>
+        <Author>Alice Admin</Author>
+        <Date>2026-04-05</Date>
+    </Document>
+</Documents>

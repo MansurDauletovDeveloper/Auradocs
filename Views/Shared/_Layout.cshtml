@@ -87,6 +87,22 @@
                                     </ul>
                                 </li>
                             }
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-file-earmark-code-fill"></i>
+                                    <span>XML Tasks</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task1"><i class="bi bi-filetype-xml"></i> Task 1 (XmlReader)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task2"><i class="bi bi-search"></i> Task 2 (LINQ to XML)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task3"><i class="bi bi-code-slash"></i> Task 3 (XSLT)</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task4"><i class="bi bi-file-earmark-spreadsheet"></i> Task 4 (ADO.NET)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task5"><i class="bi bi-file-check"></i> Task 5 (XSD + XSLT)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task6"><i class="bi bi-arrow-repeat"></i> Task 6 (Sync)</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task6History"><i class="bi bi-clock-history"></i> Task 6 History</a></li>
+                                </ul>
+                            </li>
                         </ul>
                         <ul class="navbar-nav align-items-lg-center">
                             <li class="nav-item">

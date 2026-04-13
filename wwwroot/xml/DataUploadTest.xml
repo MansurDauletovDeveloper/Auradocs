@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+  <Record>
+    <Id>1</Id>
+    <Name>Sample Valid Input A</Name>
+    <Value>150.25</Value>
+  </Record>
+  <Record>
+    <Id>2</Id>
+    <Name>Sample Valid Input B</Name>
+    <Value>89.0</Value>
+  </Record>
+</Root>

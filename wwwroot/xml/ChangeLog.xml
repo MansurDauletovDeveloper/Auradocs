@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ChangeLog>
+  <Change>
+    <Timestamp>2026-04-08T09:26:14.9810391Z</Timestamp>
+    <User>it@documentflow.local</User>
+    <RecordId>1</RecordId>
+    <NewName>Test Record 1</NewName>
+    <NewValue>100</NewValue>
+  </Change>
+</ChangeLog>

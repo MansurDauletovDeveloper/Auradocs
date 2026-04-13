@@ -1,0 +1,12 @@
+<Root>
+  <Record>
+    <Id>1</Id>
+    <Name>Test Record 1</Name>
+    <Value>100</Value>
+  </Record>
+  <Record>
+    <Id>2</Id>
+    <Name>Test Record 2</Name>
+    <Value>200</Value>
+  </Record>
+</Root>
