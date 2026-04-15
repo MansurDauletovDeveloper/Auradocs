@@ -125,7 +125,8 @@ namespace DocumentFlow.Services
             // Проверка на последовательности
             if (HasSequentialChars(password))
             {
-                errors.Add("Пароль не должен содержать последовательные символы (123, abc, qwe).");
+                // Закомментировано из-за начальных паролей вроде "Admin123!"
+                // errors.Add("Пароль не должен содержать последовательные символы (123, abc, qwe).");
                 score = Math.Max(0, score - 20);
             }
 

@@ -121,40 +121,6 @@
                 }
 
                 <div class="sidebar-section">
-                    <p class="sidebar-section-title">XML Задачи</p>
-                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task1" ? "active" : "")"
-                       asp-controller="Xml" asp-action="Task1">
-                        <i class="bi bi-filetype-xml"></i>
-                        <span>Task 1 (XmlReader)</span>
-                    </a>
-                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task2" ? "active" : "")"
-                       asp-controller="Xml" asp-action="Task2">
-                        <i class="bi bi-search"></i>
-                        <span>Task 2 (LINQ)</span>
-                    </a>
-                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task3" ? "active" : "")"
-                       asp-controller="Xml" asp-action="Task3">
-                        <i class="bi bi-code-slash"></i>
-                        <span>Task 3 (XSLT)</span>
-                    </a>
-                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task4" ? "active" : "")"
-                       asp-controller="Xml" asp-action="Task4">
-                        <i class="bi bi-file-earmark-spreadsheet"></i>
-                        <span>Task 4 (ADO.NET)</span>
-                    </a>
-                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task5" ? "active" : "")"
-                       asp-controller="Xml" asp-action="Task5">
-                        <i class="bi bi-file-check"></i>
-                        <span>Task 5 (XSD)</span>
-                    </a>
-                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && (ViewContext.RouteData.Values["action"]?.ToString() == "Task6" || ViewContext.RouteData.Values["action"]?.ToString() == "Task6History") ? "active" : "")"
-                       asp-controller="Xml" asp-action="Task6">
-                        <i class="bi bi-arrow-repeat"></i>
-                        <span>Task 6 (Sync)</span>
-                    </a>
-                </div>
-
-                <div class="sidebar-section">
                     <p class="sidebar-section-title">Уведомления</p>
                     <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notifications" ? "active" : "")"
                        asp-controller="Notifications" asp-action="Index">

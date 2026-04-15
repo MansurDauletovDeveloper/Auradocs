@@ -146,6 +146,11 @@ static async Task SeedDataAsync(UserManager<ApplicationUser> userManager, RoleMa
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(adminUser, SystemRoles.Administrator);
+            Console.WriteLine($"[SEED] User {adminEmail} created successfully.");
+        }
+        else
+        {
+            Console.WriteLine($"[SEED ERROR] Failed to create {adminEmail}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
     }
 
