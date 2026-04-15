@@ -5,12 +5,12 @@
     var roleDisplayName = DocumentFlow.Models.Entities.SystemRoles.GetDisplayName(Model.PrimaryRole);
 }
 
-<!-- Page Header -->
+<!-- Page Header with Greeting -->
 <div class="page-header mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
         <div>
             <h2 class="mb-1">
-                <span class="text-gradient">Добро пожаловать</span>, @Model.UserName!
+                <span id="greetingText">Добро пожаловать</span>, @Model.UserName
             </h2>
             <p class="text-muted mb-0 d-flex align-items-center gap-2 flex-wrap">
                 <span class="badge bg-primary">@roleDisplayName</span>
@@ -21,6 +21,9 @@
                         <span class="badge bg-secondary">@DocumentFlow.Models.Entities.SystemRoles.GetDisplayName(role)</span>
                     }
                 }
+                <span class="greeting-time">
+                    <i class="bi bi-clock me-1"></i>@DateTime.Now.ToLocalTime().ToString("dd MMMM, HH:mm")
+                </span>
             </p>
         </div>
         <a asp-controller="Documents" asp-action="Create" class="btn btn-primary">
@@ -30,7 +33,7 @@
 </div>
 
 <!-- Stats Cards -->
-<div class="row g-4 mb-4">
+<div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
         <div class="card stat-card bg-primary text-white h-100">
             <div class="card-body">
@@ -44,8 +47,8 @@
         <div class="card stat-card bg-warning h-100">
             <div class="card-body">
                 <i class="bi bi-hourglass-split stat-icon"></i>
-                <div class="stat-label text-dark mb-1" style="opacity: 0.7">На согласовании</div>
-                <div class="stat-value text-dark">@Model.MyPendingCount</div>
+                <div class="stat-label mb-1" style="color: rgba(0,0,0,0.55);">На согласовании</div>
+                <div class="stat-value" style="color: var(--slate-900);">@Model.MyPendingCount</div>
             </div>
         </div>
     </div>
@@ -71,8 +74,8 @@
 
 @if (User.IsInRole("Manager") || User.IsInRole("Administrator"))
 {
-    <!-- Approvals Section -->
-    <div class="row g-4 mb-4">
+    <!-- Approval Cards -->
+    <div class="row g-3 mb-4">
         <div class="col-md-6">
             <div class="card border-warning h-100">
                 <div class="card-body d-flex align-items-center gap-3">
@@ -81,9 +84,9 @@
                     </div>
                     <div class="flex-grow-1">
                         <div class="text-muted small">Ожидают согласования</div>
-                        <div class="h3 mb-0">@Model.PendingApprovalsCount</div>
+                        <div class="h3 mb-0" style="font-family: 'DM Sans', sans-serif; font-weight: 700;">@Model.PendingApprovalsCount</div>
                     </div>
-                    <a asp-controller="Approval" asp-action="Index" class="btn btn-warning">
+                    <a asp-controller="Approval" asp-action="Index" class="btn btn-warning btn-sm">
                         <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
@@ -99,9 +102,9 @@
                         </div>
                         <div class="flex-grow-1">
                             <div class="text-danger small">Просрочено</div>
-                            <div class="h3 mb-0 text-danger">@Model.OverdueApprovalsCount</div>
+                            <div class="h3 mb-0 text-danger" style="font-family: 'DM Sans', sans-serif; font-weight: 700;">@Model.OverdueApprovalsCount</div>
                         </div>
-                        <a asp-controller="Approval" asp-action="Index" class="btn btn-danger">
+                        <a asp-controller="Approval" asp-action="Index" class="btn btn-danger btn-sm">
                             <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
@@ -114,15 +117,15 @@
 @if (User.IsInRole("Administrator"))
 {
     <!-- Admin Stats -->
-    <div class="row g-4 mb-4">
+    <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center gap-3">
                     <div class="icon-box icon-box-info">
-                        <i class="bi bi-people-fill"></i>
+                        <i class="bi bi-people"></i>
                     </div>
                     <div>
-                        <div class="h4 mb-0">@Model.TotalUsersCount</div>
+                        <div class="h4 mb-0" style="font-family: 'DM Sans', sans-serif; font-weight: 700;">@Model.TotalUsersCount</div>
                         <div class="text-muted small">Пользователей</div>
                     </div>
                 </div>
@@ -135,7 +138,7 @@
                         <i class="bi bi-files"></i>
                     </div>
                     <div>
-                        <div class="h4 mb-0">@Model.TotalDocumentsCount</div>
+                        <div class="h4 mb-0" style="font-family: 'DM Sans', sans-serif; font-weight: 700;">@Model.TotalDocumentsCount</div>
                         <div class="text-muted small">Всего документов</div>
                     </div>
                 </div>
@@ -148,7 +151,7 @@
                         <i class="bi bi-calendar-check"></i>
                     </div>
                     <div>
-                        <div class="h4 mb-0">@Model.TodayDocumentsCount</div>
+                        <div class="h4 mb-0" style="font-family: 'DM Sans', sans-serif; font-weight: 700;">@Model.TodayDocumentsCount</div>
                         <div class="text-muted small">Документов сегодня</div>
                     </div>
                 </div>
@@ -162,8 +165,8 @@
     <div class="col-lg-8">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 d-flex align-items-center gap-2">
-                    <i class="bi bi-clock-history text-primary"></i>
+                <h5 class="mb-0 d-flex align-items-center gap-2" style="font-size: 0.95rem;">
+                    <i class="bi bi-clock-history" style="color: var(--teal-500);"></i>
                     Последние документы
                 </h5>
                 <a asp-controller="Documents" asp-action="Index" class="btn btn-sm btn-outline-primary">
@@ -177,27 +180,27 @@
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th style="padding-left: 1.5rem;">Документ</th>
+                                    <th style="padding-left: 1.25rem;">Документ</th>
                                     <th>Тип</th>
                                     <th>Статус</th>
-                                    <th style="padding-right: 1.5rem;">Дата</th>
+                                    <th style="padding-right: 1.25rem;">Дата</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var doc in Model.RecentDocuments)
                                 {
                                     <tr class="cursor-pointer" onclick="window.location='@Url.Action("Details", "Documents", new { id = doc.Id })'">
-                                        <td style="padding-left: 1.5rem;">
-                                            <div class="fw-semibold">@doc.Title</div>
+                                        <td style="padding-left: 1.25rem;">
+                                            <div class="fw-semibold" style="color: var(--slate-800);">@doc.Title</div>
                                             <code class="small">@doc.RegistrationNumber</code>
                                         </td>
-                                        <td>@GetDocumentTypeName(doc.DocumentType)</td>
+                                        <td><span class="text-muted">@GetDocumentTypeName(doc.DocumentType)</span></td>
                                         <td>
                                             <span class="badge @GetStatusBadgeClass(doc.Status)">
                                                 @GetStatusName(doc.Status)
                                             </span>
                                         </td>
-                                        <td style="padding-right: 1.5rem;">
+                                        <td style="padding-right: 1.25rem;">
                                             <span class="text-muted">@doc.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
                                         </td>
                                     </tr>
@@ -209,7 +212,7 @@
                 else
                 {
                     <div class="empty-state py-5">
-                        <i class="bi bi-inbox"></i>
+                        <i class="bi bi-inbox d-block"></i>
                         <h5>Документов пока нет</h5>
                         <p class="mb-3">Создайте свой первый документ</p>
                         <a asp-controller="Documents" asp-action="Create" class="btn btn-primary">
@@ -221,18 +224,18 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Content -->
     <div class="col-lg-4">
         <!-- Notifications -->
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 d-flex align-items-center gap-2">
-                    <i class="bi bi-bell text-warning"></i>
+                <h5 class="mb-0 d-flex align-items-center gap-2" style="font-size: 0.95rem;">
+                    <i class="bi bi-bell" style="color: var(--amber-500);"></i>
                     Уведомления
                 </h5>
                 @if (Model.UnreadNotificationsCount > 0)
                 {
-                    <span class="badge bg-danger">@Model.UnreadNotificationsCount</span>
+                    <span class="badge rounded-pill bg-danger">@Model.UnreadNotificationsCount</span>
                 }
             </div>
             <div class="card-body p-0">
@@ -240,10 +243,10 @@
                 {
                     @foreach (var notification in Model.RecentNotifications)
                     {
-                        <a asp-controller="Documents" asp-action="Details" asp-route-id="@notification.DocumentId" 
+                        <a asp-controller="Documents" asp-action="Details" asp-route-id="@notification.DocumentId"
                            class="notification-item d-block text-decoration-none @(!notification.IsRead ? "unread" : "")">
                             <div class="d-flex justify-content-between align-items-start">
-                                <div class="fw-semibold text-gray-800">@notification.Title</div>
+                                <div class="fw-semibold" style="color: var(--slate-800); font-size: 0.85rem;">@notification.Title</div>
                                 <span class="notification-time">@notification.CreatedAt.ToLocalTime().ToString("dd.MM HH:mm")</span>
                             </div>
                             <div class="text-muted small mt-1">@notification.Message</div>
@@ -258,8 +261,8 @@
                 else
                 {
                     <div class="text-center text-muted py-4">
-                        <i class="bi bi-bell-slash" style="font-size: 2rem; opacity: 0.5;"></i>
-                        <p class="mb-0 mt-2">Нет новых уведомлений</p>
+                        <i class="bi bi-bell-slash d-block" style="font-size: 1.75rem; opacity: 0.4;"></i>
+                        <p class="mb-0 mt-2 small">Нет новых уведомлений</p>
                     </div>
                 }
             </div>
@@ -268,15 +271,15 @@
         <!-- Quick Actions -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0 d-flex align-items-center gap-2">
-                    <i class="bi bi-lightning-charge text-warning"></i>
+                <h5 class="mb-0 d-flex align-items-center gap-2" style="font-size: 0.95rem;">
+                    <i class="bi bi-lightning-charge" style="color: var(--amber-500);"></i>
                     Быстрые действия
                 </h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <a asp-controller="Documents" asp-action="Create" class="quick-action-btn text-decoration-none">
-                        <i class="bi bi-plus-circle-fill"></i>
+                        <i class="bi bi-plus-circle"></i>
                         <span>Создать документ</span>
                     </a>
                     <a asp-controller="Documents" asp-action="Index" class="quick-action-btn text-decoration-none">
@@ -295,11 +298,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .cursor-pointer { cursor: pointer; }
-    .text-gray-800 { color: var(--gray-800); }
-</style>
 
 @functions {
     string GetDocumentTypeName(DocumentType type) => type switch
@@ -327,7 +325,7 @@
     string GetStatusBadgeClass(DocumentStatus status) => status switch
     {
         DocumentStatus.Draft => "bg-secondary",
-        DocumentStatus.Pending => "bg-warning text-dark",
+        DocumentStatus.Pending => "bg-warning",
         DocumentStatus.Approved => "bg-success",
         DocumentStatus.Rejected => "bg-danger",
         DocumentStatus.Archived => "bg-info",

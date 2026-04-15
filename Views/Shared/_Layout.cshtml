@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#4f46e5" />
-    <meta name="description" content="Современная система электронного документооборота" />
+    <meta name="theme-color" content="#0d9488" />
+    <meta name="description" content="DocFlow — Система электронного документооборота" />
     <title>@ViewData["Title"] - DocFlow</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,185 +13,275 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Dashboard" asp-action="Index">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <!-- Sidebar Navigation -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Меню">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <aside class="sidebar" id="sidebar">
+            <!-- Brand -->
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
                     <i class="bi bi-stack"></i>
-                    <span class="d-none d-sm-inline">DocFlow</span>
-                    <span class="d-sm-none">DF</span>
-                </a>
-                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Меню">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">
-                                    <i class="bi bi-grid-1x2-fill"></i>
-                                    <span>Главная</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Documents" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" ? "active" : "")" asp-controller="Documents" asp-action="Index">
-                                    <i class="bi bi-folder2-open"></i>
-                                    <span>Документы</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")" asp-controller="Documents" asp-action="Create">
-                                    <i class="bi bi-plus-circle-fill"></i>
-                                    <span>Создать</span>
-                                </a>
-                            </li>
-                            @if (User.IsInRole("Manager") || User.IsInRole("Administrator"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Approval" ? "active" : "")" asp-controller="Approval" asp-action="Index">
-                                        <i class="bi bi-clipboard2-check-fill"></i>
-                                        <span>Согласование</span>
-                                    </a>
-                                </li>
-                            }
-                            @if (User.IsInRole("Administrator"))
-                            {
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" || ViewContext.RouteData.Values["controller"]?.ToString() == "Templates" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-sliders2"></i>
-                                        <span>Управление</span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Users"><i class="bi bi-people-fill"></i>Пользователи</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Templates" asp-action="Index"><i class="bi bi-file-earmark-ruled-fill"></i>Шаблоны</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="AuditLogs"><i class="bi bi-journal-text"></i>Журнал аудита</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            @if (User.IsInRole("Administrator") || User.IsInRole("ITIntegrator"))
-                            {
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "ITAdmin" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-gear-wide-connected"></i>
-                                        <span>IT Admin</span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Index"><i class="bi bi-speedometer"></i>Панель управления</a></li>
-                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Users"><i class="bi bi-shield-lock-fill"></i>Права пользователей</a></li>
-                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Sessions"><i class="bi bi-activity"></i>Мониторинг сессий</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="Roles"><i class="bi bi-tags-fill"></i>Справочник ролей</a></li>
-                                        <li><a class="dropdown-item" asp-controller="ITAdmin" asp-action="TestAccounts"><i class="bi bi-key-fill"></i>Тестовые аккаунты</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-file-earmark-code-fill"></i>
-                                    <span>XML Tasks</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task1"><i class="bi bi-filetype-xml"></i> Task 1 (XmlReader)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task2"><i class="bi bi-search"></i> Task 2 (LINQ to XML)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task3"><i class="bi bi-code-slash"></i> Task 3 (XSLT)</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task4"><i class="bi bi-file-earmark-spreadsheet"></i> Task 4 (ADO.NET)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task5"><i class="bi bi-file-check"></i> Task 5 (XSD + XSLT)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task6"><i class="bi bi-arrow-repeat"></i> Task 6 (Sync)</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Xml" asp-action="Task6History"><i class="bi bi-clock-history"></i> Task 6 History</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="navbar-nav align-items-lg-center">
-                            <li class="nav-item">
-                                <a class="nav-link position-relative" asp-controller="Notifications" asp-action="Index" title="Уведомления">
-                                    <i class="bi bi-bell-fill fs-5"></i>
-                                    <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
-                                    <div class="user-avatar">
-                                        <i class="bi bi-person-fill"></i>
-                                    </div>
-                                    <span class="d-none d-md-inline">@User.Identity?.Name</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li class="dropdown-header px-3 py-2">
-                                        <small class="text-muted">Аккаунт</small>
-                                    </li>
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person-circle"></i>Мой профиль</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword"><i class="bi bi-shield-lock"></i>Сменить пароль</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <form asp-controller="Account" asp-action="Logout" method="post">
-                                            <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i>Выйти из системы</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Login">
-                                    <i class="bi bi-box-arrow-in-right"></i>
-                                    <span>Вход</span>
-                                </a>
-                            </li>
-                            <li class="nav-item d-none d-lg-block">
-                                <a class="btn btn-primary btn-sm" asp-controller="Account" asp-action="Register">
-                                    <i class="bi bi-person-plus-fill me-1"></i>Регистрация
-                                </a>
-                            </li>
-                            <li class="nav-item d-lg-none">
-                                <a class="nav-link" asp-controller="Account" asp-action="Register">
-                                    <i class="bi bi-person-plus-fill"></i>
-                                    <span>Регистрация</span>
-                                </a>
-                            </li>
-                        </ul>
-                    }
+                </div>
+                <div class="sidebar-brand-text">
+                    DocFlow
+                    <small>Документооборот</small>
                 </div>
             </div>
-        </nav>
-    </header>
 
-    <main class="container-fluid py-4 py-md-5 flex-grow-1">
-        <div class="animate-fade-in">
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show animate-slide-up mb-4" role="alert">
-                    <i class="bi bi-check-circle-fill"></i>
-                    <span>@TempData["SuccessMessage"]</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <p class="sidebar-section-title">Навигация</p>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                       asp-controller="Dashboard" asp-action="Index">
+                        <i class="bi bi-grid-1x2"></i>
+                        <span>Главная</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Documents" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" ? "active" : "")"
+                       asp-controller="Documents" asp-action="Index">
+                        <i class="bi bi-folder2-open"></i>
+                        <span>Документы</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Documents" ? "active" : "")"
+                       asp-controller="Documents" asp-action="Create">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Создать документ</span>
+                    </a>
                 </div>
-            }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show animate-slide-up mb-4" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <span>@TempData["ErrorMessage"]</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
-                </div>
-            }
-            @RenderBody()
-        </div>
-    </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                <small>&copy; @DateTime.Now.Year DocFlow — Система документооборота</small>
-                <small class="text-muted">Версия 2.0</small>
+                @if (User.IsInRole("Manager") || User.IsInRole("Administrator"))
+                {
+                    <div class="sidebar-section">
+                        <p class="sidebar-section-title">Согласование</p>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Approval" ? "active" : "")"
+                           asp-controller="Approval" asp-action="Index">
+                            <i class="bi bi-clipboard2-check"></i>
+                            <span>Согласования</span>
+                        </a>
+                    </div>
+                }
+
+                @if (User.IsInRole("Administrator"))
+                {
+                    <div class="sidebar-section">
+                        <p class="sidebar-section-title">Управление</p>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Users" ? "active" : "")"
+                           asp-controller="Admin" asp-action="Users">
+                            <i class="bi bi-people"></i>
+                            <span>Пользователи</span>
+                        </a>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Templates" ? "active" : "")"
+                           asp-controller="Templates" asp-action="Index">
+                            <i class="bi bi-file-earmark-ruled"></i>
+                            <span>Шаблоны</span>
+                        </a>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "AuditLogs" ? "active" : "")"
+                           asp-controller="Admin" asp-action="AuditLogs">
+                            <i class="bi bi-journal-text"></i>
+                            <span>Журнал аудита</span>
+                        </a>
+                    </div>
+                }
+
+                @if (User.IsInRole("Administrator") || User.IsInRole("ITIntegrator"))
+                {
+                    <div class="sidebar-section">
+                        <p class="sidebar-section-title">IT Администрирование</p>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ITAdmin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-controller="ITAdmin" asp-action="Index">
+                            <i class="bi bi-speedometer"></i>
+                            <span>Панель управления</span>
+                        </a>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ITAdmin" && ViewContext.RouteData.Values["action"]?.ToString() == "Users" ? "active" : "")"
+                           asp-controller="ITAdmin" asp-action="Users">
+                            <i class="bi bi-shield-lock"></i>
+                            <span>Права</span>
+                        </a>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ITAdmin" && ViewContext.RouteData.Values["action"]?.ToString() == "Sessions" ? "active" : "")"
+                           asp-controller="ITAdmin" asp-action="Sessions">
+                            <i class="bi bi-activity"></i>
+                            <span>Сессии</span>
+                        </a>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ITAdmin" && ViewContext.RouteData.Values["action"]?.ToString() == "Roles" ? "active" : "")"
+                           asp-controller="ITAdmin" asp-action="Roles">
+                            <i class="bi bi-tags"></i>
+                            <span>Роли</span>
+                        </a>
+                        <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ITAdmin" && ViewContext.RouteData.Values["action"]?.ToString() == "TestAccounts" ? "active" : "")"
+                           asp-controller="ITAdmin" asp-action="TestAccounts">
+                            <i class="bi bi-key"></i>
+                            <span>Тест. аккаунты</span>
+                        </a>
+                    </div>
+                }
+
+                <div class="sidebar-section">
+                    <p class="sidebar-section-title">XML Задачи</p>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task1" ? "active" : "")"
+                       asp-controller="Xml" asp-action="Task1">
+                        <i class="bi bi-filetype-xml"></i>
+                        <span>Task 1 (XmlReader)</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task2" ? "active" : "")"
+                       asp-controller="Xml" asp-action="Task2">
+                        <i class="bi bi-search"></i>
+                        <span>Task 2 (LINQ)</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task3" ? "active" : "")"
+                       asp-controller="Xml" asp-action="Task3">
+                        <i class="bi bi-code-slash"></i>
+                        <span>Task 3 (XSLT)</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task4" ? "active" : "")"
+                       asp-controller="Xml" asp-action="Task4">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <span>Task 4 (ADO.NET)</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && ViewContext.RouteData.Values["action"]?.ToString() == "Task5" ? "active" : "")"
+                       asp-controller="Xml" asp-action="Task5">
+                        <i class="bi bi-file-check"></i>
+                        <span>Task 5 (XSD)</span>
+                    </a>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Xml" && (ViewContext.RouteData.Values["action"]?.ToString() == "Task6" || ViewContext.RouteData.Values["action"]?.ToString() == "Task6History") ? "active" : "")"
+                       asp-controller="Xml" asp-action="Task6">
+                        <i class="bi bi-arrow-repeat"></i>
+                        <span>Task 6 (Sync)</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-section-title">Уведомления</p>
+                    <a class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notifications" ? "active" : "")"
+                       asp-controller="Notifications" asp-action="Index">
+                        <i class="bi bi-bell"></i>
+                        <span>Уведомления</span>
+                        <span id="notificationBadge" class="badge rounded-pill bg-danger d-none">0</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User Footer -->
+            <div class="sidebar-footer">
+                <div class="dropdown">
+                    <a class="sidebar-user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="sidebar-user-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div class="sidebar-user-info">
+                            <div class="sidebar-user-name">@User.Identity?.Name</div>
+                        </div>
+                        <i class="bi bi-chevron-expand" style="font-size: 0.7rem; color: var(--slate-400);"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end mb-1" style="min-width: 200px;">
+                        <li class="dropdown-header px-3 py-2">
+                            <small class="text-muted">Аккаунт</small>
+                        </li>
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person-circle"></i>Мой профиль</a></li>
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword"><i class="bi bi-shield-lock"></i>Сменить пароль</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i>Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="main-inner">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show animate-slide-up mb-4" role="alert">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>@TempData["SuccessMessage"]</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show animate-slide-up mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span>@TempData["ErrorMessage"]</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                    </div>
+                }
+                @RenderBody()
+            </div>
+
+            <footer class="app-footer">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                    <small>&copy; @DateTime.Now.Year DocFlow — Документооборот</small>
+                    <small class="text-muted">v2.0</small>
+                </div>
+            </footer>
         </div>
-    </footer>
-    
+    }
+    else
+    {
+        <!-- Public layout — no sidebar -->
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--slate-800) !important; display: flex !important; padding: 0.75rem 1.5rem;">
+                <div class="container-fluid">
+                    <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index" style="color: #fff; text-decoration: none;">
+                        <div class="sidebar-brand-icon" style="width: 34px; height: 34px; font-size: 1rem;">
+                            <i class="bi bi-stack"></i>
+                        </div>
+                        <span style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.15rem;">DocFlow</span>
+                    </a>
+                    <div class="d-flex align-items-center gap-2">
+                        <a class="btn btn-outline-primary btn-sm" asp-controller="Account" asp-action="Login"
+                           style="border-color: var(--teal-400); color: var(--teal-300);">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Вход
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main style="flex: 1;">
+            <div class="animate-fade-in">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="container-fluid py-3">
+                        <div class="alert alert-success alert-dismissible fade show animate-slide-up" role="alert">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>@TempData["SuccessMessage"]</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                        </div>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="container-fluid py-3">
+                        <div class="alert alert-danger alert-dismissible fade show animate-slide-up" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>@TempData["ErrorMessage"]</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                        </div>
+                    </div>
+                }
+                @RenderBody()
+            </div>
+        </main>
+
+        <footer class="app-footer" style="display: block !important;">
+            <div class="container">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                    <small>&copy; @DateTime.Now.Year DocFlow — Документооборот</small>
+                    <small class="text-muted">v2.0</small>
+                </div>
+            </div>
+        </footer>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
