@@ -12,7 +12,7 @@
         <li class="breadcrumb-item active">Тестовые аккаунты</li>
     </ol>
 
-    <div class="alert alert-info">
+    <div class="alert alert-primary">
         <i class="bi bi-info-circle me-2"></i>
         <strong>Справка:</strong> Ниже представлены тестовые аккаунты для каждой роли системы. 
         Используйте их для проверки функционала различных ролей.
@@ -71,20 +71,20 @@
                                     {
                                         if (account.IsActive)
                                         {
-                                            <span class="badge bg-success">
+                                            <span class="badge bg-primary">
                                                 <i class="bi bi-check-circle me-1"></i>Активен
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-warning text-dark">
+                                            <span class="badge bg-secondary text-dark">
                                                 <i class="bi bi-pause-circle me-1"></i>Отключен
                                             </span>
                                         }
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">
+                                        <span class="badge bg-secondary">
                                             <i class="bi bi-x-circle me-1"></i>Не создан
                                         </span>
                                     }
@@ -142,7 +142,7 @@
     </div>
 
     <!-- Предупреждение -->
-    <div class="alert alert-warning mt-4">
+    <div class="alert alert-secondary mt-4">
         <i class="bi bi-exclamation-triangle me-2"></i>
         <strong>Внимание!</strong> Тестовые аккаунты предназначены только для разработки и тестирования. 
         В продакшн-среде необходимо изменить пароли или удалить тестовых пользователей.
@@ -158,7 +158,7 @@
                 toast.className = 'position-fixed bottom-0 end-0 p-3';
                 toast.innerHTML = `
                     <div class="toast show" role="alert">
-                        <div class="toast-header bg-success text-white">
+                        <div class="toast-header bg-primary text-white">
                             <i class="bi bi-check-circle me-2"></i>
                             <strong class="me-auto">Скопировано!</strong>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
@@ -174,3 +174,5 @@
         }
     </script>
 }
+
+

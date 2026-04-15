@@ -171,10 +171,12 @@
 
     string GetRoleBadgeClass(string role) => role switch
     {
-        "Administrator" => "bg-danger",
-        "Manager" => "bg-warning",
-        "Employee" => "bg-info",
+        "Administrator" => "bg-secondary",
+        "Manager" => "bg-secondary",
+        "Employee" => "bg-primary",
         "ITIntegrator" => "bg-primary",
         _ => "bg-secondary"
     };
 }
+
+

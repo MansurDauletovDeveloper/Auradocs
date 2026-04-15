@@ -219,10 +219,12 @@
     string GetStatusBadgeClass(DocumentStatus status) => status switch
     {
         DocumentStatus.Draft => "bg-secondary",
-        DocumentStatus.Pending => "bg-warning",
-        DocumentStatus.Approved => "bg-success",
-        DocumentStatus.Rejected => "bg-danger",
-        DocumentStatus.Archived => "bg-info",
+        DocumentStatus.Pending => "bg-secondary",
+        DocumentStatus.Approved => "bg-primary",
+        DocumentStatus.Rejected => "bg-secondary",
+        DocumentStatus.Archived => "bg-primary",
         _ => "bg-secondary"
     };
 }
+
+

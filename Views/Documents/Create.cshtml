@@ -48,13 +48,13 @@
             </div>
             <div class="card-body" style="padding: 1.5rem;">
                 <form asp-action="Create" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-secondary" role="alert"></div>
 
                     <!-- Title -->
                     <div class="mb-4">
                         <label asp-for="Title" class="form-label">Название документа</label>
                         <input asp-for="Title" class="form-control" style="font-size: 1rem; padding: 0.75rem 1rem;" placeholder="Введите название" />
-                        <span asp-validation-for="Title" class="text-danger small"></span>
+                        <span asp-validation-for="Title" class="text-secondary small"></span>
                     </div>
 
                     <!-- Type & Template -->
@@ -64,7 +64,7 @@
                             <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentType>()">
                                 <option value="">Выберите тип</option>
                             </select>
-                            <span asp-validation-for="DocumentType" class="text-danger small"></span>
+                            <span asp-validation-for="DocumentType" class="text-secondary small"></span>
                         </div>
                         <div class="col-md-6">
                             <label asp-for="TemplateId" class="form-label">
@@ -81,7 +81,7 @@
                         <label asp-for="Description" class="form-label">Описание</label>
                         <textarea asp-for="Description" class="form-control" rows="3"
                                   placeholder="Краткое описание документа..."></textarea>
-                        <span asp-validation-for="Description" class="text-danger small"></span>
+                        <span asp-validation-for="Description" class="text-secondary small"></span>
                     </div>
 
                     <!-- Content Tabs -->
@@ -137,3 +137,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

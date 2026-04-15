@@ -23,7 +23,7 @@
             <div class="card-body">
                 <form asp-action="EditUser" method="post">
                     <input type="hidden" asp-for="Id" />
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-secondary" role="alert"></div>
                     
                     <!-- Name Section -->
                     <div class="section-header mb-3">
@@ -35,12 +35,12 @@
                         <div class="col-md-4">
                             <label asp-for="LastName" class="form-label"></label>
                             <input asp-for="LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                            <span asp-validation-for="LastName" class="text-secondary"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="FirstName" class="form-label"></label>
                             <input asp-for="FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                            <span asp-validation-for="FirstName" class="text-secondary"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="MiddleName" class="form-label"></label>
@@ -51,7 +51,7 @@
                     <div class="mb-4">
                         <label asp-for="Email" class="form-label"></label>
                         <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <span asp-validation-for="Email" class="text-secondary"></span>
                     </div>
 
                     <!-- Position Section -->
@@ -106,7 +106,7 @@
                         <a asp-action="Users" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Отмена
                         </a>
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" class="btn btn-secondary">
                             <i class="bi bi-check-lg me-1"></i>Сохранить изменения
                         </button>
                     </div>
@@ -119,3 +119,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

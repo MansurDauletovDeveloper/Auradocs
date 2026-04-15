@@ -14,7 +14,7 @@
     </div>
     <a asp-action="ExportAuditLogs" asp-route-userId="@Model.UserId" asp-route-actionType="@Model.ActionType" 
        asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")" asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
-       class="btn btn-success">
+       class="btn btn-primary">
         <i class="bi bi-download me-1"></i>Экспорт CSV
     </a>
 </div>
@@ -117,20 +117,20 @@
                                 <td>
                                     @{
                                         var (badgeClass, actionText) = log.ActionType switch {
-                                            DocumentFlow.Models.Entities.AuditActionType.Create => ("bg-success", "Создание"),
-                                            DocumentFlow.Models.Entities.AuditActionType.View => ("bg-info text-dark", "Просмотр"),
-                                            DocumentFlow.Models.Entities.AuditActionType.Edit => ("bg-warning text-dark", "Редактирование"),
-                                            DocumentFlow.Models.Entities.AuditActionType.Delete => ("bg-danger", "Удаление"),
-                                            DocumentFlow.Models.Entities.AuditActionType.SubmitForApproval => ("bg-info text-dark", "На согласование"),
-                                            DocumentFlow.Models.Entities.AuditActionType.Approve => ("bg-success", "Согласовано"),
-                                            DocumentFlow.Models.Entities.AuditActionType.Reject => ("bg-danger", "Отклонено"),
+                                            DocumentFlow.Models.Entities.AuditActionType.Create => ("bg-primary", "Создание"),
+                                            DocumentFlow.Models.Entities.AuditActionType.View => ("bg-primary text-dark", "Просмотр"),
+                                            DocumentFlow.Models.Entities.AuditActionType.Edit => ("bg-secondary text-dark", "Редактирование"),
+                                            DocumentFlow.Models.Entities.AuditActionType.Delete => ("bg-secondary", "Удаление"),
+                                            DocumentFlow.Models.Entities.AuditActionType.SubmitForApproval => ("bg-primary text-dark", "На согласование"),
+                                            DocumentFlow.Models.Entities.AuditActionType.Approve => ("bg-primary", "Согласовано"),
+                                            DocumentFlow.Models.Entities.AuditActionType.Reject => ("bg-secondary", "Отклонено"),
                                             DocumentFlow.Models.Entities.AuditActionType.Download => ("bg-primary", "Скачивание"),
                                             DocumentFlow.Models.Entities.AuditActionType.UploadVersion => ("bg-secondary", "Загрузка версии"),
                                             DocumentFlow.Models.Entities.AuditActionType.RestoreVersion => ("bg-secondary", "Восстановление версии"),
                                             DocumentFlow.Models.Entities.AuditActionType.AddComment => ("bg-secondary", "Комментарий"),
                                             DocumentFlow.Models.Entities.AuditActionType.Login => ("bg-primary", "Вход"),
                                             DocumentFlow.Models.Entities.AuditActionType.Logout => ("bg-dark", "Выход"),
-                                            DocumentFlow.Models.Entities.AuditActionType.UserModified => ("bg-warning text-dark", "Изменение пользователя"),
+                                            DocumentFlow.Models.Entities.AuditActionType.UserModified => ("bg-secondary text-dark", "Изменение пользователя"),
                                             DocumentFlow.Models.Entities.AuditActionType.Archive => ("bg-secondary", "Архивирование"),
                                             _ => ("bg-secondary", log.ActionType.ToString())
                                         };
@@ -214,3 +214,5 @@
         }
     </div>
 </div>
+
+

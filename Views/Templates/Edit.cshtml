@@ -23,18 +23,18 @@
             <div class="card-body">
                 <form asp-action="Edit" method="post" enctype="multipart/form-data">
                     <input type="hidden" asp-for="Id" />
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-secondary"></div>
                     
                     <div class="mb-3">
                         <label asp-for="Name" class="form-label"></label>
                         <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger small"></span>
+                        <span asp-validation-for="Name" class="text-secondary small"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="DocumentType" class="form-label"></label>
                         <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentFlow.Models.Entities.DocumentType>()"></select>
-                        <span asp-validation-for="DocumentType" class="text-danger small"></span>
+                        <span asp-validation-for="DocumentType" class="text-secondary small"></span>
                     </div>
 
                     <div class="mb-3">
@@ -82,3 +82,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

@@ -143,7 +143,7 @@
         @if (approvalRequest != null)
         {
             <div class="card border-warning mb-4">
-                <div class="card-header bg-warning bg-opacity-10 text-warning d-flex align-items-center gap-2">
+                <div class="card-header bg-secondary bg-opacity-10 text-secondary d-flex align-items-center gap-2">
                     <i class="bi bi-exclamation-circle-fill"></i>
                     <h5 class="mb-0">Требуется решение</h5>
                 </div>
@@ -159,7 +159,7 @@
                         </div>
                         @if (approvalRequest.DueDate.HasValue)
                         {
-                            <div class="d-flex justify-content-between text-danger">
+                            <div class="d-flex justify-content-between text-secondary">
                                 <span>Срок:</span>
                                 <strong>@approvalRequest.DueDate.Value.ToLocalTime().ToString("dd.MM.yyyy")</strong>
                             </div>
@@ -173,7 +173,7 @@
                             <label class="form-label">Комментарий (опционально)</label>
                             <textarea name="Comment" class="form-control" rows="2" placeholder="Добавьте комментарий..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">
+                        <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-check-circle me-1"></i>Утвердить
                         </button>
                     </form>
@@ -184,7 +184,7 @@
                         <input type="hidden" name="RequestId" value="@approvalRequest.Id" />
                         <input type="hidden" name="DocumentId" value="@Model.Id" />
                         <div class="mb-3">
-                            <label class="form-label">Причина отклонения <span class="text-danger">*</span></label>
+                            <label class="form-label">Причина отклонения <span class="text-secondary">*</span></label>
                             <textarea name="Comment" class="form-control" rows="3" required 
                                       placeholder="Укажите причину..."></textarea>
                         </div>
@@ -229,3 +229,4 @@
         return $"{size:0.##} {sizes[order]}";
     }
 }
+

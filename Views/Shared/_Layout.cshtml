@@ -160,7 +160,7 @@
                        asp-controller="Notifications" asp-action="Index">
                         <i class="bi bi-bell"></i>
                         <span>Уведомления</span>
-                        <span id="notificationBadge" class="badge rounded-pill bg-danger d-none">0</span>
+                        <span id="notificationBadge" class="badge rounded-pill bg-secondary d-none">0</span>
                     </a>
                 </div>
             </nav>
@@ -186,7 +186,7 @@
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form asp-controller="Account" asp-action="Logout" method="post">
-                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i>Выйти</button>
+                                <button type="submit" class="dropdown-item text-secondary"><i class="bi bi-box-arrow-right"></i>Выйти</button>
                             </form>
                         </li>
                     </ul>
@@ -199,7 +199,7 @@
             <div class="main-inner">
                 @if (TempData["SuccessMessage"] != null)
                 {
-                    <div class="alert alert-success alert-dismissible fade show animate-slide-up mb-4" role="alert">
+                    <div class="alert alert-primary alert-dismissible fade show animate-slide-up mb-4" role="alert">
                         <i class="bi bi-check-circle-fill"></i>
                         <span>@TempData["SuccessMessage"]</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
@@ -207,7 +207,7 @@
                 }
                 @if (TempData["ErrorMessage"] != null)
                 {
-                    <div class="alert alert-danger alert-dismissible fade show animate-slide-up mb-4" role="alert">
+                    <div class="alert alert-secondary alert-dismissible fade show animate-slide-up mb-4" role="alert">
                         <i class="bi bi-exclamation-triangle-fill"></i>
                         <span>@TempData["ErrorMessage"]</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
@@ -234,11 +234,11 @@
                         <div class="sidebar-brand-icon" style="width: 34px; height: 34px; font-size: 1rem;">
                             <i class="bi bi-stack"></i>
                         </div>
-                        <span style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.15rem;">DocFlow</span>
+                        <span style="font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.15rem;">DocFlow</span>
                     </a>
                     <div class="d-flex align-items-center gap-2">
                         <a class="btn btn-outline-primary btn-sm" asp-controller="Account" asp-action="Login"
-                           style="border-color: var(--teal-400); color: var(--teal-300);">
+                           style="border-color: var(--blue-400); color: var(--blue-300);">
                             <i class="bi bi-box-arrow-in-right me-1"></i>Вход
                         </a>
                     </div>
@@ -251,7 +251,7 @@
                 @if (TempData["SuccessMessage"] != null)
                 {
                     <div class="container-fluid py-3">
-                        <div class="alert alert-success alert-dismissible fade show animate-slide-up" role="alert">
+                        <div class="alert alert-primary alert-dismissible fade show animate-slide-up" role="alert">
                             <i class="bi bi-check-circle-fill"></i>
                             <span>@TempData["SuccessMessage"]</span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
@@ -261,7 +261,7 @@
                 @if (TempData["ErrorMessage"] != null)
                 {
                     <div class="container-fluid py-3">
-                        <div class="alert alert-danger alert-dismissible fade show animate-slide-up" role="alert">
+                        <div class="alert alert-secondary alert-dismissible fade show animate-slide-up" role="alert">
                             <i class="bi bi-exclamation-triangle-fill"></i>
                             <span>@TempData["ErrorMessage"]</span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
@@ -310,3 +310,7 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+
+

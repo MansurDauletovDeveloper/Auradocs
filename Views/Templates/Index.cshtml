@@ -79,7 +79,7 @@
                                     @if (template.IsActive)
                                     {
                                         <span class="status-dot active"></span>
-                                        <span class="ms-1 small text-success">Активен</span>
+                                        <span class="ms-1 small text-primary">Активен</span>
                                     }
                                     else
                                     {
@@ -116,7 +116,7 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                                                 <form asp-action="Delete" asp-route-id="@template.Id" method="post">
-                                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                                    <button type="submit" class="btn btn-secondary">Удалить</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -146,3 +146,4 @@ else
         </div>
     </div>
 }
+

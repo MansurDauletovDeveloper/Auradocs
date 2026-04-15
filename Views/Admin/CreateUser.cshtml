@@ -22,7 +22,7 @@
             </div>
             <div class="card-body">
                 <form asp-action="CreateUser" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-secondary" role="alert"></div>
                     
                     <!-- Name Section -->
                     <div class="section-header mb-3">
@@ -34,12 +34,12 @@
                         <div class="col-md-4">
                             <label asp-for="LastName" class="form-label"></label>
                             <input asp-for="LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                            <span asp-validation-for="LastName" class="text-secondary"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="FirstName" class="form-label"></label>
                             <input asp-for="FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                            <span asp-validation-for="FirstName" class="text-secondary"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="MiddleName" class="form-label"></label>
@@ -57,7 +57,7 @@
                         <div class="col-md-6">
                             <label asp-for="Email" class="form-label"></label>
                             <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <span asp-validation-for="Email" class="text-secondary"></span>
                         </div>
                         <div class="col-md-6">
                             <label asp-for="Password" class="form-label"></label>
@@ -67,7 +67,7 @@
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <span asp-validation-for="Password" class="text-secondary"></span>
                             
                             <!-- Индикатор силы пароля -->
                             <div class="mt-2">
@@ -79,7 +79,7 @@
                         </div>
                     </div>
 
-                    <div class="alert alert-info mb-4">
+                    <div class="alert alert-primary mb-4">
                         <h6 class="alert-heading"><i class="bi bi-info-circle me-1"></i>Требования к паролю:</h6>
                         <ul class="mb-0 small">
                             <li id="reqLength"><i class="bi bi-circle"></i> Минимум 8 символов</li>
@@ -180,9 +180,9 @@
             function updateRequirement(elementId, isMet) {
                 var el = document.getElementById(elementId);
                 if (isMet) {
-                    el.innerHTML = el.innerHTML.replace('bi-circle', 'bi-check-circle-fill text-success');
+                    el.innerHTML = el.innerHTML.replace('bi-circle', 'bi-check-circle-fill text-primary');
                 } else {
-                    el.innerHTML = el.innerHTML.replace('bi-check-circle-fill text-success', 'bi-circle');
+                    el.innerHTML = el.innerHTML.replace('bi-check-circle-fill text-primary', 'bi-circle');
                 }
             }
             
@@ -206,25 +206,25 @@
                 strengthBar.style.width = score + '%';
                 
                 if (score < 30) {
-                    strengthBar.className = 'progress-bar bg-danger';
+                    strengthBar.className = 'progress-bar bg-secondary';
                     strengthText.textContent = 'Очень слабый';
-                    strengthText.className = 'text-danger small';
+                    strengthText.className = 'text-secondary small';
                 } else if (score < 50) {
-                    strengthBar.className = 'progress-bar bg-warning';
+                    strengthBar.className = 'progress-bar bg-secondary';
                     strengthText.textContent = 'Слабый';
-                    strengthText.className = 'text-warning small';
+                    strengthText.className = 'text-secondary small';
                 } else if (score < 70) {
-                    strengthBar.className = 'progress-bar bg-info';
+                    strengthBar.className = 'progress-bar bg-primary';
                     strengthText.textContent = 'Средний';
-                    strengthText.className = 'text-info small';
+                    strengthText.className = 'text-primary small';
                 } else if (score < 90) {
                     strengthBar.className = 'progress-bar bg-primary';
                     strengthText.textContent = 'Хороший';
                     strengthText.className = 'text-primary small';
                 } else {
-                    strengthBar.className = 'progress-bar bg-success';
+                    strengthBar.className = 'progress-bar bg-primary';
                     strengthText.textContent = 'Отличный';
-                    strengthText.className = 'text-success small';
+                    strengthText.className = 'text-primary small';
                 }
             }
             
@@ -244,3 +244,5 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+

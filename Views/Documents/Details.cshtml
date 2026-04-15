@@ -34,7 +34,7 @@
         <div class="d-flex flex-wrap gap-2">
             @if (Model.CanEdit)
             {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">
                     <i class="bi bi-pencil me-1"></i>Редактировать
                 </a>
             }
@@ -277,7 +277,7 @@
             if (pendingRequest != null)
             {
                 <div class="card border-warning mb-4">
-                    <div class="card-header bg-warning text-dark">
+                    <div class="card-header bg-secondary text-dark">
                         <h5 class="mb-0"><i class="bi bi-exclamation-circle me-2"></i>Требуется ваше решение</h5>
                     </div>
                     <div class="card-body">
@@ -288,7 +288,7 @@
                                 <label class="form-label">Комментарий (опционально)</label>
                                 <textarea name="Comment" class="form-control" rows="2" id="approveComment"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success w-100 mb-2">
+                            <button type="submit" class="btn btn-primary w-100 mb-2">
                                 <i class="bi bi-check-circle me-1"></i>Утвердить
                             </button>
                         </form>
@@ -299,7 +299,7 @@
                                 <label class="form-label">Причина отклонения</label>
                                 <textarea name="Comment" class="form-control" rows="2" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-danger w-100">
+                            <button type="submit" class="btn btn-secondary w-100">
                                 <i class="bi bi-x-circle me-1"></i>Отклонить
                             </button>
                         </form>
@@ -377,10 +377,10 @@
     string GetStatusBadgeClass(DocumentStatus status) => status switch
     {
         DocumentStatus.Draft => "bg-secondary",
-        DocumentStatus.Pending => "bg-warning text-dark",
-        DocumentStatus.Approved => "bg-success",
-        DocumentStatus.Rejected => "bg-danger",
-        DocumentStatus.Archived => "bg-info",
+        DocumentStatus.Pending => "bg-secondary text-dark",
+        DocumentStatus.Approved => "bg-primary",
+        DocumentStatus.Rejected => "bg-secondary",
+        DocumentStatus.Archived => "bg-primary",
         _ => "bg-secondary"
     };
 
@@ -395,9 +395,9 @@
 
     string GetApprovalStatusBadgeClass(ApprovalStatus status) => status switch
     {
-        ApprovalStatus.Pending => "bg-warning text-dark",
-        ApprovalStatus.Approved => "bg-success",
-        ApprovalStatus.Rejected => "bg-danger",
+        ApprovalStatus.Pending => "bg-secondary text-dark",
+        ApprovalStatus.Approved => "bg-primary",
+        ApprovalStatus.Rejected => "bg-secondary",
         ApprovalStatus.Cancelled => "bg-secondary",
         _ => "bg-secondary"
     };
@@ -416,3 +416,5 @@
         return $"{size:0.##} {sizes[order]}";
     }
 }
+
+

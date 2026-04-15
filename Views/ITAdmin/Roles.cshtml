@@ -46,44 +46,44 @@
                         <li class="d-flex align-items-center gap-2 mb-2">
                             @if (role.CanApprove)
                             {
-                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <i class="bi bi-check-circle-fill text-primary"></i>
                             }
                             else
                             {
-                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                <i class="bi bi-x-circle-fill text-secondary"></i>
                             }
                             <span>Согласование документов</span>
                         </li>
                         <li class="d-flex align-items-center gap-2 mb-2">
                             @if (role.CanComment)
                             {
-                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <i class="bi bi-check-circle-fill text-primary"></i>
                             }
                             else
                             {
-                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                <i class="bi bi-x-circle-fill text-secondary"></i>
                             }
                             <span>Комментирование</span>
                         </li>
                         <li class="d-flex align-items-center gap-2 mb-2">
                             @if (role.CanAccessAudit)
                             {
-                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <i class="bi bi-check-circle-fill text-primary"></i>
                             }
                             else
                             {
-                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                <i class="bi bi-x-circle-fill text-secondary"></i>
                             }
                             <span>Доступ к аудиту</span>
                         </li>
                         <li class="d-flex align-items-center gap-2">
                             @if (role.CanManageArchive)
                             {
-                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <i class="bi bi-check-circle-fill text-primary"></i>
                             }
                             else
                             {
-                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                <i class="bi bi-x-circle-fill text-secondary"></i>
                             }
                             <span>Управление архивом</span>
                         </li>
@@ -131,7 +131,7 @@
                             <td class="text-center">
                                 @if (role.CanApprove)
                                 {
-                                    <i class="bi bi-check-lg text-success" style="font-size: 1.25rem;"></i>
+                                    <i class="bi bi-check-lg text-primary" style="font-size: 1.25rem;"></i>
                                 }
                                 else
                                 {
@@ -141,7 +141,7 @@
                             <td class="text-center">
                                 @if (role.CanComment)
                                 {
-                                    <i class="bi bi-check-lg text-success" style="font-size: 1.25rem;"></i>
+                                    <i class="bi bi-check-lg text-primary" style="font-size: 1.25rem;"></i>
                                 }
                                 else
                                 {
@@ -151,7 +151,7 @@
                             <td class="text-center">
                                 @if (role.CanAccessAudit)
                                 {
-                                    <i class="bi bi-check-lg text-success" style="font-size: 1.25rem;"></i>
+                                    <i class="bi bi-check-lg text-primary" style="font-size: 1.25rem;"></i>
                                 }
                                 else
                                 {
@@ -161,7 +161,7 @@
                             <td class="text-center">
                                 @if (role.CanManageArchive)
                                 {
-                                    <i class="bi bi-check-lg text-success" style="font-size: 1.25rem;"></i>
+                                    <i class="bi bi-check-lg text-primary" style="font-size: 1.25rem;"></i>
                                 }
                                 else
                                 {
@@ -175,3 +175,4 @@
         </div>
     </div>
 </div>
+

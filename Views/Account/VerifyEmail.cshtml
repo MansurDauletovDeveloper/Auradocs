@@ -16,21 +16,21 @@
                 <div class="card-body p-4">
                     @if (TempData["SuccessMessage"] != null)
                     {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
                             <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     }
                     @if (TempData["ErrorMessage"] != null)
                     {
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div class="alert alert-secondary alert-dismissible fade show" role="alert">
                             <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     }
                     @if (TempData["InfoMessage"] != null)
                     {
-                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
                             <i class="bi bi-info-circle me-2"></i>@TempData["InfoMessage"]
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
@@ -48,7 +48,7 @@
                         <input type="hidden" asp-for="Email" />
                         <input type="hidden" asp-for="ReturnUrl" />
 
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-secondary" role="alert"></div>
 
                         <div class="mb-4">
                             <label asp-for="Code" class="form-label"></label>
@@ -56,7 +56,7 @@
                                    placeholder="000000" maxlength="6" 
                                    style="letter-spacing: 0.5em; font-size: 1.5rem; font-weight: bold;" 
                                    autofocus />
-                            <span asp-validation-for="Code" class="text-danger"></span>
+                            <span asp-validation-for="Code" class="text-secondary"></span>
                         </div>
 
                         <div class="d-grid gap-2">
@@ -99,7 +99,7 @@
 
             <div class="card mt-3 border-info">
                 <div class="card-body small text-muted">
-                    <i class="bi bi-shield-check me-2 text-info"></i>
+                    <i class="bi bi-shield-check me-2 text-primary"></i>
                     <strong>Безопасность:</strong> Код действителен 10 минут. 
                     После 5 неудачных попыток необходимо запросить новый код.
                 </div>
@@ -142,3 +142,5 @@
         });
     </script>
 }
+
+

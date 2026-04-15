@@ -58,26 +58,26 @@
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="Status" />
                     <input type="hidden" asp-for="CurrentVersion" />
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-secondary" role="alert"></div>
                     
                     <div class="row g-3 mb-3">
                         <div class="col-md-8">
                             <label asp-for="Title" class="form-label"></label>
                             <input asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <span asp-validation-for="Title" class="text-secondary"></span>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="DocumentType" class="form-label"></label>
                             <select asp-for="DocumentType" class="form-select" asp-items="Html.GetEnumSelectList<DocumentType>()">
                             </select>
-                            <span asp-validation-for="DocumentType" class="text-danger"></span>
+                            <span asp-validation-for="DocumentType" class="text-secondary"></span>
                         </div>
                     </div>
                     
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label"></label>
                         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
+                        <span asp-validation-for="Description" class="text-secondary"></span>
                     </div>
 
                     <div class="mb-4">
@@ -108,7 +108,7 @@
                         <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Отмена
                         </a>
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" class="btn btn-secondary">
                             <i class="bi bi-check-lg me-1"></i>Сохранить изменения
                         </button>
                     </div>
@@ -121,3 +121,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

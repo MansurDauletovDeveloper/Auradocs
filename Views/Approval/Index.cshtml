@@ -15,9 +15,9 @@
     </div>
     @if (Model.OverdueCount > 0)
     {
-        <div class="d-flex align-items-center gap-2 px-3 py-2 bg-danger bg-opacity-10 rounded-pill">
-            <i class="bi bi-exclamation-triangle-fill text-danger"></i>
-            <span class="text-danger fw-medium">Просрочено: @Model.OverdueCount</span>
+        <div class="d-flex align-items-center gap-2 px-3 py-2 bg-secondary bg-opacity-10 rounded-pill">
+            <i class="bi bi-exclamation-triangle-fill text-secondary"></i>
+            <span class="text-secondary fw-medium">Просрочено: @Model.OverdueCount</span>
         </div>
     }
 </div>
@@ -38,7 +38,7 @@
                         </div>
                         @if (request.IsOverdue)
                         {
-                            <span class="badge bg-danger">Просрочено</span>
+                            <span class="badge bg-secondary">Просрочено</span>
                         }
                         else if (request.DueDate.HasValue)
                         {
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                     <div class="card-footer bg-transparent border-top-0 pt-0">
-                        <a asp-action="Review" asp-route-id="@request.Id" class="btn @(request.IsOverdue ? "btn-danger" : "btn-primary") w-100">
+                        <a asp-action="Review" asp-route-id="@request.Id" class="btn @(request.IsOverdue ? "btn-secondary" : "btn-primary") w-100">
                             <i class="bi bi-arrow-right me-1"></i>Рассмотреть
                         </a>
                     </div>
@@ -79,7 +79,7 @@ else
     <div class="card">
         <div class="card-body">
             <div class="empty-state py-5">
-                <i class="bi bi-check-circle-fill text-success"></i>
+                <i class="bi bi-check-circle-fill text-primary"></i>
                 <h5>Все согласовано!</h5>
                 <p class="mb-0">Нет документов, ожидающих вашего решения</p>
             </div>
@@ -100,3 +100,4 @@ else
         _ => "Другое"
     };
 }
+
