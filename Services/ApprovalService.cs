@@ -58,7 +58,7 @@ namespace DocumentFlow.Services
                     RequestedById = requesterId,
                     Status = ApprovalStatus.Pending,
                     Order = order++,
-                    DueDate = dueDate,
+                    DueDate = dueDate?.ToUniversalTime(),
                     CreatedAt = DateTime.UtcNow
                 };
                 _context.ApprovalRequests.Add(request);
