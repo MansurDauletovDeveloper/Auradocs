@@ -359,26 +359,35 @@ namespace DocumentFlow.Controllers
                 search.UserId, search.ActionType, search.DocumentId,
                 search.DateFrom, search.DateTo, search.Page, search.PageSize);
 
-            search.Logs = logs.Select(l => new AuditLogViewModel
-            {
-                Id = l.Id,
-                UserName = l.User?.FullName ?? "Неизвестно",
-                UserId = l.UserId,
-                ActionType = l.ActionType,
-                ActionDescription = l.ActionDescription,
-                DocumentId = l.DocumentId,
-                DocumentTitle = l.Document?.Title,
-                IpAddress = l.IpAddress,
-                Timestamp = l.Timestamp
-            }).ToList();
-
-            search.TotalCount = totalCount;
-
-            // Заполняем фильтры
             var users = await _userManager.Users.ToListAsync();
-            ViewBag.Users = users.Select(u => new SelectListItem(u.FullName, u.Id)).ToList();
 
-            return View(search);
+            var viewModel = new AuditLogListViewModel
+            {
+                Items = logs.Select(l => new AuditLogViewModel
+                {
+                    Id = l.Id,
+                    UserName = l.User?.FullName ?? "Неизвестно",
+                    UserFullName = l.User?.FullName ?? "Неизвестно",
+                    UserId = l.UserId,
+                    ActionType = l.ActionType,
+                    ActionDescription = l.ActionDescription,
+                    Description = l.ActionDescription,
+                    DocumentId = l.DocumentId,
+                    DocumentTitle = l.Document?.Title,
+                    IpAddress = l.IpAddress,
+                    Timestamp = l.Timestamp
+                }).ToList(),
+                TotalCount = totalCount,
+                CurrentPage = search.Page,
+                PageSize = search.PageSize,
+                UserId = search.UserId,
+                ActionType = search.ActionType,
+                StartDate = search.DateFrom,
+                EndDate = search.DateTo,
+                Users = users.Select(u => new SelectListItem(u.FullName, u.Id)).ToList()
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
